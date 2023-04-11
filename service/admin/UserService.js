@@ -1,5 +1,6 @@
 const UserModel = require('../../models/UserModel')
 const StudentModel = require('../../models/StudentModel')
+const TeacherModel = require('..//../models/TeacherModel')
 const { Op } = require('sequelize')
 
 const UserService = {
@@ -10,6 +11,10 @@ const UserService = {
                 number,
             },
         })
+    },
+    // 修改用户密码
+    changeUserPassword: async data => {
+        return UserModel.update(data, { where: { id: data.id } })
     },
     // 向用户表添加
     addUser: async ({ id, number, name, password, role, create_time }) => {
@@ -22,6 +27,7 @@ const UserService = {
             create_time,
         })
     },
+
     // 向学生表添加
     addStudent: async ({ id, number, name, academy, major, degree, grade, trained, create_time }) => {
         return StudentModel.create({
@@ -54,14 +60,38 @@ const UserService = {
     changeStudentInfo: async ({ id, number, name, academy, major, degree, grade }) => {
         return StudentModel.update({ number, name, academy, major, degree, grade }, { where: { id } })
     },
-    // 修改学生密码
-    changeUserPassword: async data => {
-        return UserModel.update(data, { where: { id: data.id } })
-    },
     // 删除学生
     deleteStudent: async ({ ids }) => {
         return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
     },
+
+    // 向老师表添加
+    addTeacher: async ({ id, number, name, academy, lab, create_time }) => {
+        return TeacherModel.create({ id, number, name, academy, lab, create_time })
+    },
+    // 查询老师信息
+    getTeacherList: async ({ id }) => {
+        if (id) {
+            return TeacherModel.findOne({
+                where: {
+                    id,
+                },
+            })
+        } else {
+            return TeacherModel.findAll({
+                order: [['create_time', 'ASC']],
+            })
+        }
+    },
+    // 修改老师
+    changeTeacherInfo: async ({ id, number, name, academy, lab }) => {
+        return TeacherModel.update({ number, name, academy, lab }, { where: { id } })
+    },
+    // 删除学生
+    deleteTeacher: async ({ ids }) => {
+        return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
+    },
+
     // // 更新用户信息
     // upload: async ({ id, username, gender, introduction, avatar }) => {
     //     return UserModel.update({ username, gender, introduction, avatar }, { where: { id } })

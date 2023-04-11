@@ -10,6 +10,7 @@ const router = express.Router()
 
 // 登录接口
 router.post('/admin/user/login', UserController.login)
+
 // 添加学生
 router.post('/admin/student/add', UserController.addStudent)
 // 查询学生
@@ -20,6 +21,15 @@ router.post('/admin/student/changeInfo', UserController.changeStudentInfo)
 // 删除学生信息
 router.post('/admin/student/delete', UserController.deleteStudent)
 
+// 添加老师
+router.post('/admin/teacher/add', UserController.addTeacher)
+// 查询学生
+router.get('/admin/teacher/list', UserController.getTeacherList)
+router.get('/admin/teacher/list/:id', UserController.getTeacherList)
+// 更改学生信息
+router.post('/admin/teacher/changeInfo', UserController.changeTeacherInfo)
+// 删除学生信息
+router.post('/admin/teacher/delete', UserController.deleteTeacher)
 // // 更新信息
 // router.post('/admin/user/upload', upload.single('file'), UserController.upload)
 // // 修改密码

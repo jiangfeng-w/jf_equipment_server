@@ -44,6 +44,8 @@ const UserController = {
             }
         }
     },
+
+    //#region 学生管理
     // 添加学生
     addStudent: async (req, res) => {
         // console.log(req.body)
@@ -55,7 +57,7 @@ const UserController = {
             let { number, name, password, academy, major, degree, grade } = req.body
 
             // 对密码加密
-            password = await hashPassword(password.toString())
+            password = await hashPassword(password)
             // 生成uuid
             const id = uuidv4()
             // 生成时间戳
@@ -86,10 +88,10 @@ const UserController = {
                     message: '学生添加成功',
                 })
             } catch (error) {
-                res.status(500).send({ error: '用户添加失败' })
+                res.status(500).send({ error: '学生添加失败' })
             }
         } else {
-            res.status(409).send({ error: '用户已存在' })
+            res.status(409).send({ error: '该学生已存在' })
         }
     },
     // 查询学生信息
@@ -109,7 +111,7 @@ const UserController = {
     },
     // 更新学生信息
     changeStudentInfo: async (req, res) => {
-        console.log(req.body)
+        // console.log(req.body)
         // 解构出数据
         let { id, number, name, password, academy, major, degree, grade } = req.body
 
@@ -122,8 +124,8 @@ const UserController = {
         // 若更改了密码
         if (password) {
             // 对密码加密
-            console.log('修改密码')
-            data1.password = await hashPassword(password.toString())
+            // console.log('修改密码')
+            data1.password = await hashPassword(password)
         }
         try {
             const result1 = await UserService.changeUserPassword(data1)
@@ -158,6 +160,119 @@ const UserController = {
             })
         }
     },
+    //#endregion
+
+    //#region 老师管理
+    // 添加老师
+    addTeacher: async (req, res) => {
+        // console.log(req.body)
+        // 查找数据库是否已存在用户
+        const user = await UserService.login(req.body)
+        // 如果用户不存在
+        if (!user) {
+            // 把数据解构出来
+            let { number, name, password, academy, lab } = req.body
+            // 对密码加密
+            password = await hashPassword(password)
+            // 生成uuid
+            const id = uuidv4()
+            // 生成时间戳
+            const create_time = Date.now()
+            try {
+                // 向users表添加数据
+                const result1 = await UserService.addUser({
+                    id,
+                    number,
+                    name,
+                    password,
+                    role: 3,
+                    create_time,
+                })
+                // 向teacher表添加
+                const result2 = await UserService.addTeacher({
+                    id,
+                    number,
+                    name,
+                    academy,
+                    lab,
+                    create_time,
+                })
+                res.status(201).send({
+                    message: '老师添加成功',
+                })
+            } catch (error) {
+                res.status(500).send({ error: '老师添加失败' })
+            }
+        } else {
+            res.status(409).send({ error: '该老师已存在' })
+        }
+    },
+    // 查询老师信息
+    getTeacherList: async (req, res) => {
+        try {
+            const list = await UserService.getTeacherList(req.params)
+            res.status(200).send({
+                message: req.params.id ? '获取老师信息成功' : '获取老师列表成功',
+                data: list,
+            })
+        } catch (err) {
+            res.status(500).send({
+                message: req.params.id ? '获取老师信息失败' : '获取老师列表失败',
+                error: err.message,
+            })
+        }
+    },
+    // 更新老师信息
+    changeTeacherInfo: async (req, res) => {
+        // console.log(req.body)
+        // 解构出数据
+        let { id, number, name, password, academy, lab } = req.body
+
+        // 提交给user表的数据
+        const data1 = {
+            id,
+            number,
+            name,
+        }
+        // 若更改了密码
+        if (password) {
+            // 对密码加密
+            // console.log('修改密码')
+            data1.password = await hashPassword(password)
+        }
+        try {
+            const result1 = await UserService.changeUserPassword(data1)
+            console.log('user更新完成')
+            const result2 = await UserService.changeTeacherInfo({
+                id,
+                number,
+                name,
+                academy,
+                lab,
+            })
+            res.status(200).send({
+                message: '老师信息更新成功',
+            })
+        } catch (error) {
+            res.status(400).send({ error: '老师信息更新失败' })
+        }
+    },
+    // 删除老师信息
+    deleteTeacher: async (req, res) => {
+        // console.log(req.body)
+        const result = await UserService.deleteTeacher(req.body)
+        if (result !== 0) {
+            res.status(200).send({
+                message: '删除成功',
+            })
+        } else {
+            res.status(400).send({
+                error: '删除失败',
+            })
+        }
+    },
+
+    //#endregion
     // // 更新信息，上传文件
     // upload: async (req, res) => {
     //     // 把用户信息解构出来
