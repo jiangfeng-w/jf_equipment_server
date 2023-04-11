@@ -5,8 +5,8 @@ const UserController = require('../../controllers/admin/UserController')
 
 const router = express.Router()
 
-// 检查token是否过期
-router.get('/admin/user/checkToken', () => {})
+// // 检查token是否过期
+// router.get('/admin/checkToken', () => {})
 
 // 登录接口
 router.post('/admin/user/login', UserController.login)

@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 
 const UserRouter = require('./routes/admin/UserRouter')
+const checkToken = require('./utils/checkToken')
 
 var app = express()
 
@@ -22,9 +23,12 @@ app.use(express.static(path.join(__dirname, 'public')))
 // /web: 前台页面接口
 
 // 全局中间件，验证token是否过期
-// app.use(checkToken)
+app.use(checkToken)
 
 app.use(UserRouter)
+
+// 全局中间件，在跳转路由时检查token是否过期
+app.use('/admin/checkToken', () => {})
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
