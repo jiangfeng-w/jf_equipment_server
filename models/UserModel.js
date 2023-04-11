@@ -4,36 +4,32 @@ const sequelize = require('../db/dbConfig')
 const User = sequelize.define(
     'User',
     {
-        user_id: {
+        id: {
             type: DataTypes.STRING,
             allowNull: false,
             primaryKey: true,
         },
-        user_number: {
+        number: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        user_name: {
+        name: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        user_password: {
+        password: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        user_role: {
+        role: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        user_gender: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        user_avatar: {
+        avatar: {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        user_create_time: {
+        create_time: {
             type: DataTypes.BIGINT,
             allowNull: false,
         },

@@ -1,13 +1,66 @@
 const UserModel = require('../../models/UserModel')
+const StudentModel = require('../../models/StudentModel')
+const { Op } = require('sequelize')
 
 const UserService = {
     // 登录，用用户名获取信息
-    login: async ({ user_number }) => {
+    login: async ({ number }) => {
         return UserModel.findOne({
             where: {
-                user_number,
+                number,
             },
         })
+    },
+    // 向用户表添加
+    addUser: async ({ id, number, name, password, role, create_time }) => {
+        return UserModel.create({
+            id,
+            number,
+            name,
+            password,
+            role,
+            create_time,
+        })
+    },
+    // 向学生表添加
+    addStudent: async ({ id, number, name, academy, major, degree, grade, trained, create_time }) => {
+        return StudentModel.create({
+            id,
+            number,
+            name,
+            academy,
+            major,
+            degree,
+            grade,
+            trained,
+            create_time,
+        })
+    },
+    // 查询学生信息
+    getStudentList: async ({ id }) => {
+        if (id) {
+            return StudentModel.findOne({
+                where: {
+                    id,
+                },
+            })
+        } else {
+            return StudentModel.findAll({
+                order: [['create_time', 'ASC']],
+            })
+        }
+    },
+    // 修改学生信息
+    changeStudentInfo: async ({ id, number, name, academy, major, degree, grade }) => {
+        return StudentModel.update({ number, name, academy, major, degree, grade }, { where: { id } })
+    },
+    // 修改学生密码
+    changeUserPassword: async data => {
+        return UserModel.update(data, { where: { id: data.id } })
+    },
+    // 删除学生
+    deleteStudent: async ({ ids }) => {
+        return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
     },
     // // 更新用户信息
     // upload: async ({ id, username, gender, introduction, avatar }) => {

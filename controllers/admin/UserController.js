@@ -2,7 +2,7 @@ const UserService = require('../../service/admin/UserService')
 const JWT = require('../../utils/JWT')
 // const deleteAvatar = require('../../utils/deleteAvatar')
 const { hashPassword, comparePassword } = require('../../utils/encryptPassword')
-// const { v4: uuidv4 } = require('uuid')
+const { v4: uuidv4 } = require('uuid')
 
 const UserController = {
     // 登录
@@ -11,40 +11,153 @@ const UserController = {
         const user = await UserService.login(req.body)
         if (!user) {
             res.status(404).send({
-                message: '没有此用户',
+                error: '没有此用户',
             })
         } else {
             // 校验密码
-            const { user_password } = req.body
-            const result = await comparePassword(user_password, user.user_password)
+            const { password } = req.body
+            const result = await comparePassword(password, user.password)
             // 如果result为false，则密码错误
             if (!result) {
-                res.status(401).send({ message: '密码错误' })
+                res.status(401).send({ error: '密码错误' })
             } else {
                 // 设置token
                 const token = JWT.generate(
                     {
-                        user_id: user.user_id,
-                        user_number: user.user_number,
+                        id: user.id,
+                        number: user.number,
                     },
                     '1h'
                 )
                 // 放在请求头中返回给前端
                 res.header('Authorization', token)
                 res.status(200).send({
-                    message: '登录成功',
+                    error: '登录成功',
                     data: {
-                        user_number: user.user_number,
-                        user_name: user.user_name,
-                        user_role: user.user_role,
-                        user_gender: user.user_gender,
-                        user_avatar: user.user_avatar,
+                        number: user.number,
+                        name: user.name,
+                        role: user.role,
+                        gender: user.gender,
+                        avatar: user.avatar,
                     },
                 })
             }
         }
     },
+    // 添加学生
+    addStudent: async (req, res) => {
+        // console.log(req.body)
+        // 查找数据库是否已存在用户
+        const user = await UserService.login(req.body)
+        // 如果用户不存在
+        if (!user) {
+            // 把数据解构出来
+            let { number, name, password, academy, major, degree, grade } = req.body
 
+            // 对密码加密
+            password = await hashPassword(password.toString())
+            // 生成uuid
+            const id = uuidv4()
+            // 生成时间戳
+            const create_time = Date.now()
+            // 向users表添加数据
+            try {
+                const result1 = await UserService.addUser({
+                    id,
+                    number,
+                    name,
+                    password,
+                    role: 4,
+                    create_time,
+                })
+
+                const result2 = await UserService.addStudent({
+                    id,
+                    number,
+                    name,
+                    academy,
+                    major,
+                    degree,
+                    trained: 0,
+                    grade,
+                    create_time,
+                })
+                res.status(201).send({
+                    message: '学生添加成功',
+                })
+            } catch (error) {
+                res.status(500).send({ error: '用户添加失败' })
+            }
+        } else {
+            res.status(409).send({ error: '用户已存在' })
+        }
+    },
+    // 查询学生信息
+    getStudentList: async (req, res) => {
+        try {
+            const list = await UserService.getStudentList(req.params)
+            res.status(200).send({
+                message: req.params.id ? '获取学生信息成功' : '获取学生列表成功',
+                data: list,
+            })
+        } catch (err) {
+            res.status(500).send({
+                message: req.params.id ? '获取学生信息失败' : '获取学生列表失败',
+                error: err.message,
+            })
+        }
+    },
+    // 更新学生信息
+    changeStudentInfo: async (req, res) => {
+        console.log(req.body)
+        // 解构出数据
+        let { id, number, name, password, academy, major, degree, grade } = req.body
+
+        // 提交给user表的数据
+        const data1 = {
+            id,
+            number,
+            name,
+        }
+        // 若更改了密码
+        if (password) {
+            // 对密码加密
+            console.log('修改密码')
+            data1.password = await hashPassword(password.toString())
+        }
+        try {
+            const result1 = await UserService.changeUserPassword(data1)
+            console.log('user更新完成')
+            const result2 = await UserService.changeStudentInfo({
+                id,
+                number,
+                name,
+                academy,
+                major,
+                degree,
+                grade,
+            })
+            res.status(200).send({
+                message: '学生信息更新成功',
+            })
+        } catch (error) {
+            res.status(400).send({ error: '学生信息更新失败' })
+        }
+    },
+    // 删除学生信息
+    deleteStudent: async (req, res) => {
+        // console.log(req.body)
+        const result = await UserService.deleteStudent(req.body)
+        if (result !== 0) {
+            res.status(200).send({
+                message: '删除成功',
+            })
+        } else {
+            res.status(400).send({
+                error: '删除失败',
+            })
+        }
+    },
     // // 更新信息，上传文件
     // upload: async (req, res) => {
     //     // 把用户信息解构出来
