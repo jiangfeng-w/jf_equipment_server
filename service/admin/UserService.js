@@ -1,7 +1,8 @@
 const UserModel = require('../../models/UserModel')
 const StudentModel = require('../../models/StudentModel')
-const TeacherModel = require('..//../models/TeacherModel')
-const AdminModel = require('..//../models/AdminModel')
+const TeacherModel = require('../../models/TeacherModel')
+const AdminModel = require('../../models/AdminModel')
+const SuperModel = require('../../models/SuperModel')
 const { Op } = require('sequelize')
 
 const UserService = {
@@ -13,8 +14,32 @@ const UserService = {
             },
         })
     },
-    // 修改用户密码
-    changeUserPassword: async data => {
+    // 通过id获取信息
+    getInfoByID: async id => {
+        return UserModel.findOne({
+            where: {
+                id,
+            },
+        })
+    },
+    // 通过角色对应的表查询信息
+    getSpecificInfo: async ({ id, role }) => {
+        if (role === 1) {
+            return SuperModel.findOne({
+                where: {
+                    id,
+                },
+            })
+        } else {
+            return AdminModel.findOne({
+                where: {
+                    id,
+                },
+            })
+        }
+    },
+    // 修改用户表信息
+    changeUserInfo: async data => {
         return UserModel.update(data, { where: { id: data.id } })
     },
     // 向用户表添加
@@ -31,6 +56,29 @@ const UserService = {
     // 删除用户
     deleteUser: async ({ ids }) => {
         return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
+    },
+
+    // 修改超级管理员/设备管理员信息
+    changeOwnInfo: async ({ id, email, phone_number, role }) => {
+        if (role === 1) {
+            return SuperModel.update(
+                { email, phone_number },
+                {
+                    where: {
+                        id,
+                    },
+                }
+            )
+        } else {
+            return AdminModel.update(
+                { email, phone_number },
+                {
+                    where: {
+                        id,
+                    },
+                }
+            )
+        }
     },
 
     // 向学生表添加

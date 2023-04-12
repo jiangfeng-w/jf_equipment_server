@@ -1,7 +1,7 @@
 const express = require('express')
 const UserController = require('../../controllers/admin/UserController')
-// const multer = require('multer')
-// const upload = multer({ dest: 'public/images/avatars/' })
+const multer = require('multer')
+const avatar = multer({ dest: 'public/images/avatars/' })
 
 const router = express.Router()
 
@@ -10,8 +10,13 @@ const router = express.Router()
 
 // 登录接口
 router.post('/admin/user/login', UserController.login)
-// 删除学生信息
+// 删除用户信息
 router.post('/admin/user/delete', UserController.deleteUser)
+// 获取用户信息
+router.get('/admin/user/info', UserController.getUserInfo)
+
+// 个人中心更新信息
+router.post('/admin/user/changeOwnInfo', avatar.single('file'), UserController.changeOwnInfo)
 
 // 添加学生
 router.post('/admin/student/add', UserController.addStudent)

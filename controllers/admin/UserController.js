@@ -1,6 +1,6 @@
 const UserService = require('../../service/admin/UserService')
 const JWT = require('../../utils/JWT')
-// const deleteAvatar = require('../../utils/deleteAvatar')
+const deleteAvatar = require('../../utils/deleteAvatar')
 const { hashPassword, comparePassword } = require('../../utils/encryptPassword')
 const { v4: uuidv4 } = require('uuid')
 
@@ -37,12 +37,29 @@ const UserController = {
                         number: user.number,
                         name: user.name,
                         role: user.role,
-                        gender: user.gender,
                         avatar: user.avatar,
                     },
                 })
             }
         }
+    },
+    // 获取用户信息
+    getUserInfo: async (req, res) => {
+        // 用token获取id
+        const token = req.headers['authorization'].split(' ')[1]
+        const origin = JWT.verify(token)
+        // console.log(origin)
+        // 从user表中获取用户角色
+        const user = await UserService.getInfoByID(origin.id)
+        // 从角色对应的表中查询数据
+        const specificInfo = await UserService.getSpecificInfo({
+            id: origin.id,
+            role: user.role,
+        })
+        res.status(200).send({
+            message: '获取用户信息成功',
+            data: specificInfo,
+        })
     },
     // 删除用户信息
     deleteUser: async (req, res) => {
@@ -58,6 +75,75 @@ const UserController = {
             })
         }
     },
+
+    // 个人中心
+    changeOwnInfo: async (req, res) => {
+        // console.log(req.body)
+        // console.log(req.file)
+        // 把用户信息解构出来
+        const { number, name, phone_number, email, oldAvatar } = req.body
+        let avatar
+        if (!req.file) {
+            // 如果没有上传文件，头像使用旧头像地址
+            avatar = oldAvatar
+        } else {
+            // 如果更改了头像,即有文件上传
+            // 头像地址
+            avatar = `http://localhost:3000/images/avatars/${req.file.filename}`
+            // 删除原来的头像
+            deleteAvatar(oldAvatar)
+        }
+        // 用token获取id
+        const token = req.headers['authorization'].split(' ')[1]
+        const origin = JWT.verify(token)
+        // console.log(origin)
+
+        // 从user表中获取用户角色
+        const user = await UserService.getInfoByID(origin.id)
+
+        try {
+            // 更改user表信息
+            const result1 = await UserService.changeUserInfo({
+                id: origin.id,
+                number,
+                name,
+                avatar,
+            })
+            // // 更改对应角色的表的信息
+            const result2 = await UserService.changeOwnInfo({
+                id: origin.id,
+                email,
+                phone_number,
+                role: user.role,
+            })
+            res.status(200).send({
+                message: '用户信息更新成功',
+                data: {
+                    number,
+                    name,
+                    avatar,
+                    role: user.role,
+                },
+            })
+        } catch (error) {
+            res.status(400).send({ error: '用户信息更新失败' })
+        }
+        // // console.log(result)
+        // if (result[0] === 1) {
+        //     res.status(200).send({
+        //         message: '用户信息更新成功',
+        //         data: {
+        //             username,
+        //             gender: Number(gender),
+        //             introduction,
+        //             avatar,
+        //         },
+        //     })
+        // } else {
+        //     res.status(400).send({ message: '用户信息更新失败' })
+        // }
+    },
+
     //#region 学生管理
     // 添加学生
     addStudent: async (req, res) => {
@@ -141,7 +227,7 @@ const UserController = {
             data1.password = await hashPassword(password)
         }
         try {
-            const result1 = await UserService.changeUserPassword(data1)
+            const result1 = await UserService.changeUserInfo(data1)
             console.log('user更新完成')
             const result2 = await UserService.changeStudentInfo({
                 id,
