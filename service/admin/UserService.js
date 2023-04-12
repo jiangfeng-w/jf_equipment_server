@@ -1,6 +1,7 @@
 const UserModel = require('../../models/UserModel')
 const StudentModel = require('../../models/StudentModel')
 const TeacherModel = require('..//../models/TeacherModel')
+const AdminModel = require('..//../models/AdminModel')
 const { Op } = require('sequelize')
 
 const UserService = {
@@ -26,6 +27,10 @@ const UserService = {
             role,
             create_time,
         })
+    },
+    // 删除用户
+    deleteUser: async ({ ids }) => {
+        return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
     },
 
     // 向学生表添加
@@ -60,10 +65,6 @@ const UserService = {
     changeStudentInfo: async ({ id, number, name, academy, major, degree, grade }) => {
         return StudentModel.update({ number, name, academy, major, degree, grade }, { where: { id } })
     },
-    // 删除学生
-    deleteStudent: async ({ ids }) => {
-        return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
-    },
 
     // 向老师表添加
     addTeacher: async ({ id, number, name, academy, phone_number, email, lab, create_time }) => {
@@ -87,11 +88,44 @@ const UserService = {
     changeTeacherInfo: async ({ id, number, name, academy, phone_number, email, lab }) => {
         return TeacherModel.update({ number, name, academy, phone_number, email, lab }, { where: { id } })
     },
-    // 删除老师
-    deleteTeacher: async ({ ids }) => {
-        return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
-    },
 
+    // 添加管理员
+    addAdmin: async ({ id, number, name, phone_number, email, create_time }) => {
+        return AdminModel.create({
+            id,
+            number,
+            name,
+            phone_number,
+            email,
+            create_time,
+        })
+    },
+    // 查询管理员信息
+    getAdminList: async ({ id }) => {
+        if (id) {
+            return AdminModel.findOne({
+                where: {
+                    id,
+                },
+            })
+        } else {
+            return AdminModel.findAll({
+                order: [['create_time', 'ASC']],
+            })
+        }
+    },
+    // 修改管理员信息
+    changeAdminInfo: async ({ id, number, name, phone_number, email }) => {
+        return AdminModel.update(
+            {
+                number,
+                name,
+                phone_number,
+                email,
+            },
+            { where: { id } }
+        )
+    },
     // // 更新用户信息
     // upload: async ({ id, username, gender, introduction, avatar }) => {
     //     return UserModel.update({ username, gender, introduction, avatar }, { where: { id } })

@@ -44,7 +44,20 @@ const UserController = {
             }
         }
     },
-
+    // 删除用户信息
+    deleteUser: async (req, res) => {
+        // console.log(req.body)
+        const result = await UserService.deleteUser(req.body)
+        if (result !== 0) {
+            res.status(200).send({
+                message: '删除成功',
+            })
+        } else {
+            res.status(400).send({
+                error: '删除失败',
+            })
+        }
+    },
     //#region 学生管理
     // 添加学生
     addStudent: async (req, res) => {
@@ -146,20 +159,6 @@ const UserController = {
             res.status(400).send({ error: '学生信息更新失败' })
         }
     },
-    // 删除学生信息
-    deleteStudent: async (req, res) => {
-        // console.log(req.body)
-        const result = await UserService.deleteStudent(req.body)
-        if (result !== 0) {
-            res.status(200).send({
-                message: '删除成功',
-            })
-        } else {
-            res.status(400).send({
-                error: '删除失败',
-            })
-        }
-    },
     //#endregion
 
     //#region 老师管理
@@ -244,7 +243,7 @@ const UserController = {
         }
         try {
             const result1 = await UserService.changeUserPassword(data1)
-            console.log('user更新完成')
+            // console.log('user更新完成')
             const result2 = await UserService.changeTeacherInfo({
                 id,
                 number,
@@ -261,21 +260,105 @@ const UserController = {
             res.status(400).send({ error: '老师信息更新失败' })
         }
     },
-    // 删除老师信息
-    deleteTeacher: async (req, res) => {
+
+    //#endregion
+
+    //#region 设备管理员
+    // 添加设备管理员
+    addAdmin: async (req, res) => {
+        console.log(req.body)
         // console.log(req.body)
-        const result = await UserService.deleteTeacher(req.body)
-        if (result !== 0) {
-            res.status(200).send({
-                message: '删除成功',
-            })
+        // 查找数据库是否已存在用户
+        const user = await UserService.login(req.body)
+        // 如果用户不存在
+        if (!user) {
+            // 把数据解构出来
+            let { number, name, password, phone_number, email } = req.body
+            // 对密码加密
+            password = await hashPassword(password)
+            // 生成uuid
+            const id = uuidv4()
+            // 生成时间戳
+            const create_time = Date.now()
+            try {
+                // 向users表添加数据
+                const result1 = await UserService.addUser({
+                    id,
+                    number,
+                    name,
+                    password,
+                    role: 2,
+                    create_time,
+                })
+                // 向teacher表添加
+                const result2 = await UserService.addAdmin({
+                    id,
+                    number,
+                    name,
+                    phone_number,
+                    email,
+                    create_time,
+                })
+                res.status(201).send({
+                    message: '管理员添加成功',
+                })
+            } catch (error) {
+                res.status(500).send({ error: '管理员添加失败' })
+            }
         } else {
-            res.status(400).send({
-                error: '删除失败',
+            res.status(409).send({ error: '该管理员已存在' })
+        }
+    },
+    // 查询管理员信息
+    getAdminList: async (req, res) => {
+        try {
+            const list = await UserService.getAdminList(req.params)
+            res.status(200).send({
+                message: req.params.id ? '获取管理员信息成功' : '获取管理员列表成功',
+                data: list,
+            })
+        } catch (err) {
+            res.status(500).send({
+                message: req.params.id ? '获取管理员信息失败' : '获取管理员列表失败',
+                error: err.message,
             })
         }
     },
+    // 更新管理员信息
+    changeAdminInfo: async (req, res) => {
+        // console.log(req.body)
+        // 解构出数据
+        let { id, number, name, password, phone_number, email, academy, lab } = req.body
 
+        // 提交给user表的数据
+        const data1 = {
+            id,
+            number,
+            name,
+        }
+        // 若更改了密码
+        if (password) {
+            // 对密码加密
+            // console.log('修改密码')
+            data1.password = await hashPassword(password)
+        }
+        try {
+            const result1 = await UserService.changeUserPassword(data1)
+            // console.log('user更新完成')
+            const result2 = await UserService.changeAdminInfo({
+                id,
+                number,
+                name,
+                phone_number,
+                email,
+            })
+            res.status(200).send({
+                message: '管理员信息更新成功',
+            })
+        } catch (error) {
+            res.status(400).send({ error: '管理员信息更新失败' })
+        }
+    },
     //#endregion
     // // 更新信息，上传文件
     // upload: async (req, res) => {
