@@ -66,8 +66,8 @@ const UserService = {
     },
 
     // 向老师表添加
-    addTeacher: async ({ id, number, name, academy, lab, create_time }) => {
-        return TeacherModel.create({ id, number, name, academy, lab, create_time })
+    addTeacher: async ({ id, number, name, academy, phone_number, email, lab, create_time }) => {
+        return TeacherModel.create({ id, number, name, academy, phone_number, email, lab, create_time })
     },
     // 查询老师信息
     getTeacherList: async ({ id }) => {
@@ -84,10 +84,10 @@ const UserService = {
         }
     },
     // 修改老师
-    changeTeacherInfo: async ({ id, number, name, academy, lab }) => {
-        return TeacherModel.update({ number, name, academy, lab }, { where: { id } })
+    changeTeacherInfo: async ({ id, number, name, academy, phone_number, email, lab }) => {
+        return TeacherModel.update({ number, name, academy, phone_number, email, lab }, { where: { id } })
     },
-    // 删除学生
+    // 删除老师
     deleteTeacher: async ({ ids }) => {
         return UserModel.destroy({ where: { id: { [Op.in]: ids } } })
     },

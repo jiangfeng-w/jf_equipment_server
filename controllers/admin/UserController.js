@@ -171,7 +171,7 @@ const UserController = {
         // 如果用户不存在
         if (!user) {
             // 把数据解构出来
-            let { number, name, password, academy, lab } = req.body
+            let { number, name, password, phone_number, email, academy, lab } = req.body
             // 对密码加密
             password = await hashPassword(password)
             // 生成uuid
@@ -194,6 +194,8 @@ const UserController = {
                     number,
                     name,
                     academy,
+                    phone_number,
+                    email,
                     lab,
                     create_time,
                 })
@@ -226,7 +228,7 @@ const UserController = {
     changeTeacherInfo: async (req, res) => {
         // console.log(req.body)
         // 解构出数据
-        let { id, number, name, password, academy, lab } = req.body
+        let { id, number, name, password, phone_number, email, academy, lab } = req.body
 
         // 提交给user表的数据
         const data1 = {
@@ -248,6 +250,8 @@ const UserController = {
                 number,
                 name,
                 academy,
+                phone_number,
+                email,
                 lab,
             })
             res.status(200).send({

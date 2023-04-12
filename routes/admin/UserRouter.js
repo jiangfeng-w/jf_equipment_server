@@ -23,10 +23,10 @@ router.post('/admin/student/delete', UserController.deleteStudent)
 
 // 添加老师
 router.post('/admin/teacher/add', UserController.addTeacher)
-// 查询学生
+// 查询老师
 router.get('/admin/teacher/list', UserController.getTeacherList)
 router.get('/admin/teacher/list/:id', UserController.getTeacherList)
-// 更改学生信息
+// 更改老师信息
 router.post('/admin/teacher/changeInfo', UserController.changeTeacherInfo)
 // 删除学生信息
 router.post('/admin/teacher/delete', UserController.deleteTeacher)
