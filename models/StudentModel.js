@@ -17,6 +17,30 @@ const Student = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        phone_number: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        email: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        is_bind_email: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        role: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        avatar: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         academy: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -35,7 +59,7 @@ const Student = sequelize.define(
         },
         trained: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
         },
         train_teacher: {
             type: DataTypes.STRING,

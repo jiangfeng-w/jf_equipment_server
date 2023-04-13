@@ -17,6 +17,10 @@ const Admin = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         phone_number: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -25,7 +29,11 @@ const Admin = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        manage_equipment: {
+        role: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        avatar: {
             type: DataTypes.STRING,
             allowNull: true,
         },

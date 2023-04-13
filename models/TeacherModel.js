@@ -17,6 +17,10 @@ const Teacher = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         phone_number: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -25,6 +29,14 @@ const Teacher = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        role: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        avatar: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         academy: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -32,10 +44,6 @@ const Teacher = sequelize.define(
         lab: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },
-        train_student: {
-            type: DataTypes.STRING,
-            allowNull: true,
         },
         create_time: {
             type: DataTypes.BIGINT,

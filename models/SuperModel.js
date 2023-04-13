@@ -17,6 +17,10 @@ const Super = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        password: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         phone_number: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -24,6 +28,14 @@ const Super = sequelize.define(
         email: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        role: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
+        avatar: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         create_time: {
             type: DataTypes.BIGINT,

@@ -18,7 +18,14 @@ function checkToken(req, res, next) {
         } else {
             // token未过期
             // 生成新token
-            const newToken = JWT.generate({ id: origin.id, username: origin.username }, '1h')
+            const newToken = JWT.generate(
+                {
+                    id: origin.id,
+                    number: origin.number,
+                    role: origin.role,
+                },
+                '1h'
+            )
 
             // 1.如果是路由跳转
             if (req.url === '/admin/checkToken') {
