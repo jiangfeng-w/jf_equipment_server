@@ -15,6 +15,10 @@ router.post('/admin/changeOwnInfo', avatar.single('file'), UserController.change
 // 个人中心更改密码
 router.post('/admin/changePass', UserController.changePass)
 
+// 忘记密码重置
+router.post('/admin/sendEmail', UserController.sendEmail)
+router.post('/admin/resetPass', UserController.resetPass)
+
 //#region 学生
 // 添加学生
 router.post('/admin/student/add', UserController.addStudent)

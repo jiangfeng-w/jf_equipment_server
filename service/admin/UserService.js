@@ -51,12 +51,28 @@ const UserService = {
             )
         }
     },
-    // 个人中心修改密码
+    // 个人中心密码
     changePass: async ({ id, role, password }) => {
         if (role === 1) {
             return SuperModel.update({ password }, { where: { id } })
         } else {
             return AdminModel.update({ password }, { where: { id } })
+        }
+    },
+    // 存储验证码
+    sendEmail: async ({ number, role, email_code }) => {
+        if (role === 1) {
+            return SuperModel.update({ email_code }, { where: { number } })
+        } else {
+            return AdminModel.update({ email_code }, { where: { number } })
+        }
+    },
+    // 删除验证码
+    removeEmailCode: async ({ id, role }) => {
+        if (role === 1) {
+            return SuperModel.update({ email_code: null }, { where: { id } })
+        } else {
+            return AdminModel.update({ email_code: null }, { where: { id } })
         }
     },
 

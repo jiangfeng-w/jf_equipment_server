@@ -1,8 +1,8 @@
 const JWT = require('./JWT')
 
 function checkToken(req, res, next) {
-    // 如果还未登录，不用处理
-    if (req.url === '/admin/user/login') {
+    // 如果还未登录，或者是重置密码请求，不用处理
+    if (req.url === '/admin/user/login' || req.url === '/admin/resetPass' || req.url === '/admin/sendEmail') {
         next()
         return
     }

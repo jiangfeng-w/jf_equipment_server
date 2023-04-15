@@ -2,6 +2,7 @@ const UserService = require('../../service/admin/UserService')
 const JWT = require('../../utils/JWT')
 const deleteAvatar = require('../../utils/deleteAvatar')
 const { hashPassword, comparePassword } = require('../../utils/encryptPassword')
+const { generateVerificationCode, sendVerificationCodeEmail } = require('../../utils/email')
 const { v4: uuidv4 } = require('uuid')
 
 const UserController = {
@@ -83,8 +84,8 @@ const UserController = {
                     id: user.id,
                     number: user.number,
                     name: user.name,
-                    phone_number: user.phone_number,
-                    email: user.email,
+                    phone_number: phone_number,
+                    email: email,
                     role: user.role,
                     avatar,
                     create_time: user.create_time,
@@ -120,12 +121,83 @@ const UserController = {
                 password,
             })
             if (result[0] === 1) {
-                res.status(200).send({
-                    message: '密码更新成功',
+                res.status(201).send({
+                    message: '密码修改成功',
                 })
             } else {
-                res.status(400).send({ message: '密码更新失败' })
+                res.status(400).send({ message: '密码修改失败' })
             }
+        }
+    },
+    // 忘记密码重置
+    sendEmail: async (req, res) => {
+        // 从数据库读取用户信息
+        // console.log(req.body)
+        const user = await UserService.login(req.body)
+        if (!user) {
+            res.status(404).send({
+                error: '没有此用户',
+            })
+        } else {
+            // console.log(user.email, user.password)
+            // 如果邮箱错误
+            if (!(req.body.email === user.email)) {
+                res.status(404).send({
+                    error: '邮箱错误',
+                })
+            } else {
+                // 生成验证码
+                const rightAuthCode = generateVerificationCode()
+                try {
+                    // 发送邮件
+                    await sendVerificationCodeEmail(user.email, rightAuthCode)
+                    // 向数据库存储验证码
+                    await UserService.sendEmail({ number: user.number, role: user.role, email_code: rightAuthCode })
+                    res.status(201).send({
+                        message: '验证码已发送，请注意查看邮箱',
+                    })
+                } catch (error) {
+                    // console.log(error)
+                    res.status(404).send({
+                        error,
+                    })
+                }
+            }
+        }
+    },
+    resetPass: async (req, res) => {
+        // console.log(req.body)
+        // 解构出所需数据
+        const { number, role, authCode, newPassword } = req.body
+
+        // 取出数据
+        const user = await UserService.login({ number, role })
+        // 验证码正确
+        if (authCode === user.email_code) {
+            // 对新密码加密
+            const password = await hashPassword(newPassword)
+            // 更新密码
+            const result = await UserService.changePass({
+                id: user.id,
+                role,
+                password,
+            })
+            if (result[0] === 1) {
+                // 删除验证码
+                await UserService.removeEmailCode({
+                    id: user.id,
+                    role,
+                })
+                res.status(201).send({
+                    message: '密码修改成功',
+                })
+            } else {
+                res.status(400).send({ error: '密码修改失败' })
+            }
+        } else {
+            res.status(404).send({
+                error: '验证码不正确',
+            })
         }
     },
 

@@ -29,6 +29,10 @@ const Super = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        email_code: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         role: {
             type: DataTypes.INTEGER,
             allowNull: true,
