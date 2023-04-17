@@ -129,7 +129,7 @@ const UserController = {
             }
         }
     },
-    // 忘记密码重置
+    // 发邮件
     sendEmail: async (req, res) => {
         // 从数据库读取用户信息
         // console.log(req.body)
@@ -165,6 +165,7 @@ const UserController = {
             }
         }
     },
+    // 重置密码
     resetPass: async (req, res) => {
         // console.log(req.body)
         // 解构出所需数据
@@ -409,7 +410,7 @@ const UserController = {
         // 如果用户不存在
         if (!user) {
             // 把数据解构出来
-            let { number, name, password, phone_number, email } = req.body
+            let { number, name, password, academy, lab, phone_number, email } = req.body
             // 对密码加密
             password = await hashPassword(password)
             // 生成uuid
@@ -417,12 +418,14 @@ const UserController = {
             // 生成时间戳
             const create_time = Date.now()
             try {
-                // 向teacher表添加
+                // 向admin表添加
                 const result = await UserService.addAdmin({
                     id,
                     number,
                     name,
                     password,
+                    academy,
+                    lab,
                     phone_number,
                     email,
                     create_time,
@@ -470,6 +473,8 @@ const UserController = {
             password,
             phone_number,
             email,
+            academy,
+            lab,
         })
         if (result[0] === 1) {
             res.status(200).send({

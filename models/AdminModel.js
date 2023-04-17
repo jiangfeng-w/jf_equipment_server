@@ -41,6 +41,14 @@ const Admin = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        academy: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        lab: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         create_time: {
             type: DataTypes.BIGINT,
             allowNull: false,

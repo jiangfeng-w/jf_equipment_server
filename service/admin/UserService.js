@@ -5,7 +5,7 @@ const SuperModel = require('../../models/SuperModel')
 const { Op } = require('sequelize')
 
 const UserService = {
-    // // 登录，用用户名获取信息
+    // 登录，用用户名获取信息
     login: async ({ number, role }) => {
         if (role === 1) {
             return SuperModel.findOne({
@@ -169,12 +169,14 @@ const UserService = {
 
     //#region 设备管理员
     // 添加管理员
-    addAdmin: async ({ id, number, name, password, phone_number, email, create_time }) => {
+    addAdmin: async ({ id, number, name, password, academy, lab, phone_number, email, create_time }) => {
         return AdminModel.create({
             id,
             number,
             name,
             password,
+            academy,
+            lab,
             phone_number,
             email,
             create_time,
@@ -201,7 +203,7 @@ const UserService = {
         })
     },
     // 修改管理员信息
-    changeAdminInfo: async ({ id, number, name, password, phone_number, email }) => {
+    changeAdminInfo: async ({ id, number, name, password, phone_number, email, academy, lab }) => {
         return AdminModel.update(
             {
                 number,
@@ -209,6 +211,8 @@ const UserService = {
                 password,
                 phone_number,
                 email,
+                academy,
+                lab,
             },
             { where: { id } }
         )

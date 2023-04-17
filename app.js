@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 
 const UserRouter = require('./routes/admin/UserRouter')
+const EquipmentRouter = require('./routes/admin/EquipmentRouter')
 const checkToken = require('./utils/checkToken')
 
 var app = express()
@@ -26,6 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(checkToken)
 
 app.use(UserRouter)
+app.use(EquipmentRouter)
 
 // 全局中间件，在跳转路由时检查token是否过期
 app.use('/admin/checkToken', () => {})
