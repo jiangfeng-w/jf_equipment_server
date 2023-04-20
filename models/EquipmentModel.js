@@ -86,20 +86,16 @@ const Equipment = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        maneger_email: {
+        manager_email: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        is_appointment: {
+        state: {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
-        is_repair: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        is_scrapped: {
-            type: DataTypes.INTEGER,
+        reason_application: {
+            type: DataTypes.STRING,
             allowNull: true,
         },
         create_time: {
