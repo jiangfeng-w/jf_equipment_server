@@ -14,11 +14,19 @@ const Equipment = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        now_pic: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         manager_number: {
             type: DataTypes.STRING,
             allowNull: false,
         },
         manager_name: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        manager_email: {
             type: DataTypes.STRING,
             allowNull: false,
         },

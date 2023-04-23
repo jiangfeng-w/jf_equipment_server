@@ -8,7 +8,7 @@ const EquipmentService = {
     addEquipment: async data => {
         return EquipmentModel.create(data)
     },
-    // 用id查询设备信息
+    // 用id查询设备信息/查询全部设备
     getEquipmentList: async ({ iden }) => {
         if (iden) {
             // 用学工号查询
@@ -135,8 +135,10 @@ const EquipmentService = {
     repair: async ({
         id,
         name,
+        now_pic,
         manager_number,
         manager_name,
+        manager_email,
         reason_application,
         repair_person,
         apply_time,
@@ -145,8 +147,10 @@ const EquipmentService = {
         return RepairModel.create({
             id,
             name,
+            now_pic,
             manager_number,
             manager_name,
+            manager_email,
             reason_application,
             repair_person,
             apply_time,
@@ -154,17 +158,127 @@ const EquipmentService = {
         })
     },
     // 改变报废表
-    scrap: async ({ id, name, manager_number, manager_name, reason_application, apply_time, state }) => {
+    scrap: async ({
+        id,
+        name,
+        now_pic,
+        manager_number,
+        manager_name,
+        manager_email,
+        reason_application,
+        apply_time,
+        state,
+    }) => {
         return ScrapModel.create({
             id,
             name,
+            now_pic,
             manager_number,
             manager_name,
+            manager_email,
             reason_application,
             apply_time,
             state,
         })
     },
+
+    //#region 维修
+    // 设备维修列表
+    getRepairList: async ({ iden }) => {
+        if (iden) {
+            // 用学工号查询
+            if (iden.length === 12) {
+                return RepairModel.findAll({
+                    where: { manager_number: iden },
+                })
+            } else {
+                // 用id查询单个设备
+                return RepairModel.findOne({
+                    where: { id: iden },
+                })
+            }
+        } else {
+            return RepairModel.findAll()
+        }
+    },
+    // 再次申请维修
+    reApplyRepairEquip: async ({ id }) => {
+        return EquipmentModel.update({ state: 1 }, { where: { id } })
+    },
+    reApplyRepair: async ({ id }) => {
+        return RepairModel.update({ state: 0 }, { where: { id } })
+    },
+    // 维修完成/取消维修
+    repairCompletedEquip: async ({ id }) => {
+        return EquipmentModel.update({ reason_application: '', state: 0 }, { where: { id } })
+    },
+    repairCompleted: async ({ id }) => {
+        return RepairModel.destroy({ where: { id } })
+    },
+    // 同意维修申请
+    agreeRepairEquip: async ({ id }) => {
+        return EquipmentModel.update({ state: 3 }, { where: { id } })
+    },
+    agreeRepair: async ({ id, approve_time }) => {
+        return RepairModel.update({ state: 2, approve_time }, { where: { id } })
+    },
+    // 拒绝维修申请
+    refuseRepairEquip: async ({ id }) => {
+        return EquipmentModel.update({ state: 2 }, { where: { id } })
+    },
+    refuseRepair: async ({ id, approve_time }) => {
+        return RepairModel.update({ state: 1, approve_time }, { where: { id } })
+    },
+    //#endregion
+
+    //#region 报废
+    // 设备报废列表
+    getScrapList: async ({ iden }) => {
+        if (iden) {
+            // 用学工号查询
+            if (iden.length === 12) {
+                return ScrapModel.findAll({
+                    where: { manager_number: iden },
+                })
+            } else {
+                // 用id查询单个设备
+                return ScrapModel.findOne({
+                    where: { id: iden },
+                })
+            }
+        } else {
+            return ScrapModel.findAll()
+        }
+    },
+    // 再次申请维修
+    reApplyScrapEquip: async ({ id }) => {
+        return EquipmentModel.update({ state: 1 }, { where: { id } })
+    },
+    reApplyScrap: async ({ id }) => {
+        return ScrapModel.update({ state: 0 }, { where: { id } })
+    },
+    // 取消报废申请
+    scrapCompletedEquip: async ({ id }) => {
+        return EquipmentModel.update({ reason_application: '', state: 0 }, { where: { id } })
+    },
+    scrapCompleted: async ({ id }) => {
+        return ScrapModel.destroy({ where: { id } })
+    },
+    // 同意报废申请
+    agreeScrapEquip: async ({ id }) => {
+        return EquipmentModel.update({ state: 6 }, { where: { id } })
+    },
+    agreeScrap: async ({ id, approve_time }) => {
+        return ScrapModel.update({ state: 2, approve_time }, { where: { id } })
+    },
+    // 拒绝报废申请
+    refuseScrapEquip: async ({ id }) => {
+        return EquipmentModel.update({ state: 5 }, { where: { id } })
+    },
+    refuseScrap: async ({ id, approve_time }) => {
+        return ScrapModel.update({ state: 1, approve_time }, { where: { id } })
+    },
+    //#endregion
 }
 
 module.exports = EquipmentService
