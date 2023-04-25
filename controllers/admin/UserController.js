@@ -242,10 +242,32 @@ const UserController = {
             res.status(409).send({ error: '该学生已存在' })
         }
     },
+    // 学生列表长度
+    getStudentListLength: async (req, res) => {
+        let { name = '', major = [], grade = [], trained = '' } = req.body
+        try {
+            const length = await UserService.getStudentListLength(name, major, grade, trained)
+            res.status(200).send({
+                message: '获取长度成功',
+                data: length,
+            })
+        } catch (error) {
+            res.status(500).send({
+                message: '获取长度失败',
+            })
+        }
+    },
     // 查询学生信息
     getStudentList: async (req, res) => {
+        let { name = '', major = [], grade = [], trained = '', pageSize = 5, currentPage = 1 } = req.body
+        let id
+
+        if (req.params) {
+            id = req.params.id
+        }
+
         try {
-            const list = await UserService.getStudentList(req.params)
+            const list = await UserService.getStudentList(id, name, major, grade, trained, pageSize, currentPage)
             res.status(200).send({
                 message: req.params.id ? '获取学生信息成功' : '获取学生列表成功',
                 data: list,
@@ -257,6 +279,7 @@ const UserController = {
             })
         }
     },
+
     // 更新学生信息
     changeStudentInfo: async (req, res) => {
         // console.log(req.body)
@@ -300,6 +323,95 @@ const UserController = {
             })
         }
     },
+    getMajors: async ({ req, res }) => {
+        const result = await UserService.getMajors()
+        // 处理成嵌套结构的专业
+        const transformMajors = data => {
+            const result = []
+            const academySet = new Set()
+            const majorSet = new Set()
+
+            data.forEach(({ academy, major }) => {
+                if (!academySet.has(academy)) {
+                    const academyNode = {
+                        value: academy,
+                        label: academy,
+                        children: [],
+                    }
+                    result.push(academyNode)
+                    academySet.add(academy)
+                }
+                // 去重
+                if (major && !majorSet.has(major)) {
+                    const majorNode = { value: major, label: major }
+                    const academyNode = result.find(node => node.value === academy)
+                    academyNode.children.push(majorNode)
+                    majorSet.add(major)
+                }
+            })
+
+            return result
+        }
+        const majors = transformMajors(result)
+
+        // 处理成嵌套的年级
+        const transformGrades = data => {
+            const result = []
+            const degreeSet = new Set()
+            const gradeSet = new Set()
+
+            data.forEach(({ degree, grade }) => {
+                if (!degreeSet.has(degree)) {
+                    const degreeNode = {
+                        value: degree,
+                        label: degree,
+                        children: [],
+                    }
+                    result.push(degreeNode)
+                    degreeSet.add(degree)
+                }
+                // 去重
+                if (grade && !gradeSet.has(grade)) {
+                    const gradeNode = { value: grade, label: grade }
+                    const degreeNode = result.find(node => node.value === degree)
+                    degreeNode.children.push(gradeNode)
+                    gradeSet.add(grade)
+                }
+            })
+            // 排序
+            result.sort((a, b) => {
+                if (a.label < b.label) {
+                    return -1
+                } else if (a.label > b.label) {
+                    return 1
+                } else {
+                    return 0
+                }
+            })
+            result.forEach(degreeNode => {
+                degreeNode.children.sort((a, b) => {
+                    if (a.label < b.label) {
+                        return -1
+                    } else if (a.label > b.label) {
+                        return 1
+                    } else {
+                        return 0
+                    }
+                })
+            })
+
+            return result
+        }
+        const grades = transformGrades(result)
+
+        res.status(200).send({
+            message: '获取专业数据成功',
+            data: {
+                majors,
+                grades,
+            },
+        })
+    },
     //#endregion
 
     //#region 老师管理
@@ -341,10 +453,31 @@ const UserController = {
             res.status(409).send({ error: '该老师已存在' })
         }
     },
+    // 获取表长度
+    getTeacherListLength: async (req, res) => {
+        let { name = '', lab = [] } = req.body
+        try {
+            const length = await UserService.getTeacherListLength(name, lab)
+            res.status(200).send({
+                message: '获取长度成功',
+                data: length,
+            })
+        } catch (error) {
+            res.status(500).send({
+                message: '获取长度失败',
+            })
+        }
+    },
     // 查询老师信息
     getTeacherList: async (req, res) => {
+        let { name = '', lab = [], pageSize = 5, currentPage = 1 } = req.body
+        let id
+
+        if (req.params) {
+            id = req.params.id
+        }
         try {
-            const list = await UserService.getTeacherList(req.params)
+            const list = await UserService.getTeacherList(id, name, lab, pageSize, currentPage)
             res.status(200).send({
                 message: req.params.id ? '获取老师信息成功' : '获取老师列表成功',
                 data: list,
@@ -440,10 +573,31 @@ const UserController = {
             res.status(409).send({ error: '该管理员已存在' })
         }
     },
+    // 获取表长度
+    getAdminListLength: async (req, res) => {
+        let { name = '', lab = [] } = req.body
+        try {
+            const length = await UserService.getAdminListLength(name, lab)
+            res.status(200).send({
+                message: '获取长度成功',
+                data: length,
+            })
+        } catch (error) {
+            res.status(500).send({
+                message: '获取长度失败',
+            })
+        }
+    },
     // 查询管理员信息
     getAdminList: async (req, res) => {
+        let { name = '', lab = [], pageSize = 5, currentPage = 1 } = req.body
+        let id
+
+        if (req.params) {
+            id = req.params.id
+        }
         try {
-            const list = await UserService.getAdminList(req.params)
+            const list = await UserService.getAdminList(id, name, lab, pageSize, currentPage)
             res.status(200).send({
                 message: req.params.id ? '获取管理员信息成功' : '获取管理员列表成功',
                 data: list,

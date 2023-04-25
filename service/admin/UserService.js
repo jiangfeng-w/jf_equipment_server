@@ -91,8 +91,19 @@ const UserService = {
             create_time,
         })
     },
-    // 用id查询学生信息
-    getStudentList: async ({ id }) => {
+    // 获取长度
+    getStudentListLength: async (name, major, grade, trained) => {
+        return StudentModel.count({
+            where: {
+                name: { [Op.like]: `%${name || ''}%` },
+                trained: trained,
+                major: major.length ? { [Op.in]: major } : { [Op.ne]: null },
+                grade: grade.length ? { [Op.in]: grade } : { [Op.ne]: null },
+            },
+        })
+    },
+    // 用id查询学生信息/查询全部信息
+    getStudentList: async (id, name, major, grade, trained, pageSize, currentPage) => {
         if (id) {
             return StudentModel.findOne({
                 where: { id },
@@ -100,8 +111,16 @@ const UserService = {
             })
         } else {
             return StudentModel.findAll({
+                where: {
+                    name: { [Op.like]: `%${name || ''}%` },
+                    trained: trained,
+                    major: major.length ? { [Op.in]: major } : { [Op.ne]: null },
+                    grade: grade.length ? { [Op.in]: grade } : { [Op.ne]: null },
+                },
                 attributes: { exclude: ['password'] },
-                order: [['create_time', 'ASC']],
+                order: [['number', 'ASC']],
+                offset: (currentPage - 1) * pageSize,
+                limit: pageSize,
             })
         }
     },
@@ -119,6 +138,12 @@ const UserService = {
     deleteStudent: async ({ ids }) => {
         return StudentModel.destroy({ where: { id: { [Op.in]: ids } } })
     },
+    // 查学生专业
+    getMajors: async () => {
+        return StudentModel.findAll({
+            attributes: ['academy', 'major', 'degree', 'grade', 'trained'],
+        })
+    },
     //#endregion
 
     //#region 老师
@@ -126,8 +151,18 @@ const UserService = {
     addTeacher: async ({ id, number, name, password, phone_number, email, academy, lab, create_time }) => {
         return TeacherModel.create({ id, number, name, password, phone_number, email, academy, lab, create_time })
     },
+    // 获取长度
+    getTeacherListLength: async (name, lab) => {
+        return TeacherModel.count({
+            where: {
+                name: { [Op.like]: `%${name || ''}%` },
+                lab: lab.length ? { [Op.in]: lab } : { [Op.ne]: null },
+            },
+        })
+    },
+
     // 用id查询老师信息
-    getTeacherList: async ({ id }) => {
+    getTeacherList: async (id, name, lab, pageSize, currentPage) => {
         if (id) {
             return TeacherModel.findOne({
                 where: { id },
@@ -135,8 +170,14 @@ const UserService = {
             })
         } else {
             return TeacherModel.findAll({
+                where: {
+                    name: { [Op.like]: `%${name || ''}%` },
+                    lab: lab.length ? { [Op.in]: lab } : { [Op.ne]: null },
+                },
                 attributes: { exclude: ['password'] },
-                order: [['create_time', 'ASC']],
+                order: [['number', 'ASC']],
+                offset: (currentPage - 1) * pageSize,
+                limit: pageSize,
             })
         }
     },
@@ -182,8 +223,17 @@ const UserService = {
             create_time,
         })
     },
+    // 获取长度
+    getAdminListLength: async (name, lab) => {
+        return AdminModel.count({
+            where: {
+                name: { [Op.like]: `%${name || ''}%` },
+                lab: lab.length ? { [Op.in]: lab } : { [Op.ne]: null },
+            },
+        })
+    },
     // 用id查询管理员信息
-    getAdminList: async ({ id }) => {
+    getAdminList: async (id, name, lab, pageSize, currentPage) => {
         if (id) {
             return AdminModel.findOne({
                 where: { id },
@@ -191,8 +241,14 @@ const UserService = {
             })
         } else {
             return AdminModel.findAll({
+                where: {
+                    name: { [Op.like]: `%${name || ''}%` },
+                    lab: lab.length ? { [Op.in]: lab } : { [Op.ne]: null },
+                },
                 attributes: { exclude: ['password'] },
-                order: [['create_time', 'ASC']],
+                order: [['number', 'ASC']],
+                offset: (currentPage - 1) * pageSize,
+                limit: pageSize,
             })
         }
     },
