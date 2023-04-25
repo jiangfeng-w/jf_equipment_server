@@ -96,7 +96,7 @@ const UserService = {
         return StudentModel.count({
             where: {
                 name: { [Op.like]: `%${name || ''}%` },
-                trained: trained,
+                trained: trained.length ? { [Op.in]: trained } : { [Op.ne]: null },
                 major: major.length ? { [Op.in]: major } : { [Op.ne]: null },
                 grade: grade.length ? { [Op.in]: grade } : { [Op.ne]: null },
             },
@@ -113,7 +113,7 @@ const UserService = {
             return StudentModel.findAll({
                 where: {
                     name: { [Op.like]: `%${name || ''}%` },
-                    trained: trained,
+                    trained: trained.length ? { [Op.in]: trained } : { [Op.ne]: null },
                     major: major.length ? { [Op.in]: major } : { [Op.ne]: null },
                     grade: grade.length ? { [Op.in]: grade } : { [Op.ne]: null },
                 },

@@ -2,19 +2,98 @@ const EquipmentModel = require('../../models/EquipmentModel')
 const RepairModel = require('../../models/RepairModel')
 const ScrapModel = require('../../models/ScrapModel')
 const { Sequelize } = require('sequelize')
+const { Op } = require('sequelize')
 
 const EquipmentService = {
     // 添加设备
     addEquipment: async data => {
         return EquipmentModel.create(data)
     },
+    // 查询长度
+    getEquipmentListLength: async (
+        iden,
+        name,
+        function_range,
+        classification,
+        discipline_classification,
+        unit,
+        country,
+        price_range,
+        buy_time,
+        state
+    ) => {
+        if (iden) {
+            return EquipmentModel.count({
+                where: {
+                    manager_number: iden,
+                    name: { [Op.like]: `%${name || ''}%` },
+                    function_range: { [Op.like]: `%${function_range || ''}%` },
+                    classification: classification.length ? { [Op.in]: classification } : { [Op.ne]: null },
+                    discipline_classification: discipline_classification.length
+                        ? { [Op.in]: discipline_classification }
+                        : { [Op.ne]: null },
+                    unit: unit.length ? { [Op.in]: unit } : { [Op.ne]: null },
+                    country: country.length ? { [Op.in]: country } : { [Op.ne]: null },
+                    price_range: price_range.length ? { [Op.in]: price_range } : { [Op.ne]: null },
+                    state: state.length ? { [Op.in]: state } : { [Op.ne]: null },
+                    buy_time: buy_time.length === 2 ? { [Op.between]: buy_time } : { [Op.ne]: null },
+                },
+            })
+        } else {
+            return EquipmentModel.count({
+                where: {
+                    name: { [Op.like]: `%${name || ''}%` },
+                    function_range: { [Op.like]: `%${function_range || ''}%` },
+                    classification: classification.length ? { [Op.in]: classification } : { [Op.ne]: null },
+                    discipline_classification: discipline_classification.length
+                        ? { [Op.in]: discipline_classification }
+                        : { [Op.ne]: null },
+                    unit: unit.length ? { [Op.in]: unit } : { [Op.ne]: null },
+                    country: country.length ? { [Op.in]: country } : { [Op.ne]: null },
+                    price_range: price_range.length ? { [Op.in]: price_range } : { [Op.ne]: null },
+                    state: state.length ? { [Op.in]: state } : { [Op.ne]: null },
+                    buy_time: buy_time.length === 2 ? { [Op.between]: buy_time } : { [Op.ne]: null },
+                },
+            })
+        }
+    },
+
     // 用id查询设备信息/查询全部设备
-    getEquipmentList: async ({ iden }) => {
+    getEquipmentList: async (
+        iden,
+        name,
+        function_range,
+        classification,
+        discipline_classification,
+        unit,
+        country,
+        price_range,
+        buy_time,
+        state,
+        pageSize,
+        currentPage
+    ) => {
         if (iden) {
             // 用学工号查询
             if (iden.length === 12) {
                 return EquipmentModel.findAll({
-                    where: { manager_number: iden },
+                    where: {
+                        manager_number: iden,
+                        name: { [Op.like]: `%${name || ''}%` },
+                        function_range: { [Op.like]: `%${function_range || ''}%` },
+                        classification: classification.length ? { [Op.in]: classification } : { [Op.ne]: null },
+                        discipline_classification: discipline_classification.length
+                            ? { [Op.in]: discipline_classification }
+                            : { [Op.ne]: null },
+                        unit: unit.length ? { [Op.in]: unit } : { [Op.ne]: null },
+                        country: country.length ? { [Op.in]: country } : { [Op.ne]: null },
+                        price_range: price_range.length ? { [Op.in]: price_range } : { [Op.ne]: null },
+                        state: state.length ? { [Op.in]: state } : { [Op.ne]: null },
+                        buy_time: buy_time.length === 2 ? { [Op.between]: buy_time } : { [Op.ne]: null },
+                    },
+                    order: [['manager_number', 'ASC']],
+                    offset: (currentPage - 1) * pageSize,
+                    limit: pageSize,
                 })
             } else {
                 // 用id查询单个设备
@@ -23,9 +102,27 @@ const EquipmentService = {
                 })
             }
         } else {
-            return EquipmentModel.findAll()
+            return EquipmentModel.findAll({
+                where: {
+                    name: { [Op.like]: `%${name || ''}%` },
+                    function_range: { [Op.like]: `%${function_range || ''}%` },
+                    classification: classification.length ? { [Op.in]: classification } : { [Op.ne]: null },
+                    discipline_classification: discipline_classification.length
+                        ? { [Op.in]: discipline_classification }
+                        : { [Op.ne]: null },
+                    unit: unit.length ? { [Op.in]: unit } : { [Op.ne]: null },
+                    country: country.length ? { [Op.in]: country } : { [Op.ne]: null },
+                    price_range: price_range.length ? { [Op.in]: price_range } : { [Op.ne]: null },
+                    state: state.length ? { [Op.in]: state } : { [Op.ne]: null },
+                    buy_time: buy_time.length === 2 ? { [Op.between]: buy_time } : { [Op.ne]: null },
+                },
+                order: [['manager_number', 'ASC']],
+                offset: (currentPage - 1) * pageSize,
+                limit: pageSize,
+            })
         }
     },
+
     // 获取options
     getOptions: async () => {
         // 国别

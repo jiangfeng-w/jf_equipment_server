@@ -62,10 +62,80 @@ const EquipmentController = {
             res.status(500).send({ error: '设备添加失败' })
         }
     },
+    // 获取列表长度
+    getEquipmentListLength: async (req, res) => {
+        let {
+            iden,
+            name = '',
+            function_range = '',
+            classification = [],
+            discipline_classification = [],
+            unit = [],
+            country = [],
+            price_range = [],
+            buy_time = [],
+            state = [],
+        } = req.body
+        try {
+            const length = await EquipmentService.getEquipmentListLength(
+                iden,
+                name,
+                function_range,
+                classification,
+                discipline_classification,
+                unit,
+                country,
+                price_range,
+                buy_time,
+                state
+            )
+            res.status(200).send({
+                message: '获取长度成功',
+                data: length,
+            })
+        } catch (error) {
+            res.status(500).send({
+                message: '获取长度失败',
+            })
+        }
+    },
     // 获取设备
     getEquipmentList: async (req, res) => {
+        let {
+            iden,
+            name = '',
+            function_range = '',
+            classification = [],
+            discipline_classification = [],
+            unit = [],
+            country = [],
+            price_range = [],
+            buy_time = [],
+            state = [],
+            pageSize = 5,
+            currentPage = 1,
+        } = req.body
+
+        // 如果有iden
+        if (req.params.iden) {
+            iden = req.params.iden
+        }
+
         try {
-            const list = await EquipmentService.getEquipmentList(req.params)
+            const list = await EquipmentService.getEquipmentList(
+                iden,
+                name,
+                function_range,
+                classification,
+                discipline_classification,
+                unit,
+                country,
+                price_range,
+                buy_time,
+                state,
+                pageSize,
+                currentPage
+            )
             res.status(200).send({
                 message: req.params.iden ? '获取设备信息成功' : '获取设备列表成功',
                 data: list,

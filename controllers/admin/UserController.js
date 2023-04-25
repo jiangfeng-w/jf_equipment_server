@@ -105,7 +105,6 @@ const UserController = {
         const origin = JWT.verify(token)
         // 从数据库读取用户信息
         const user = await UserService.getInfoByID(origin.id, origin.role)
-        console.log(user)
         // 密码对比
         const isRight = await comparePassword(oldPassword, user.password)
         // isRight为false，则原密码错误
@@ -132,14 +131,12 @@ const UserController = {
     // 发邮件
     sendEmail: async (req, res) => {
         // 从数据库读取用户信息
-        // console.log(req.body)
         const user = await UserService.login(req.body)
         if (!user) {
             res.status(404).send({
                 error: '没有此用户',
             })
         } else {
-            // console.log(user.email, user.password)
             // 如果邮箱错误
             if (!(req.body.email === user.email)) {
                 res.status(404).send({
@@ -157,7 +154,6 @@ const UserController = {
                         message: '验证码已发送，请注意查看邮箱',
                     })
                 } catch (error) {
-                    // console.log(error)
                     res.status(404).send({
                         error,
                     })
@@ -167,7 +163,6 @@ const UserController = {
     },
     // 重置密码
     resetPass: async (req, res) => {
-        // console.log(req.body)
         // 解构出所需数据
         const { number, role, authCode, newPassword } = req.body
 
@@ -205,7 +200,6 @@ const UserController = {
     //#region 学生管理
     // 添加学生
     addStudent: async (req, res) => {
-        // console.log(req.body)
         // 查找数据库是否已存在用户
         const user = await UserService.getStudentByNumber(req.body)
         // 如果用户不存在
@@ -259,10 +253,10 @@ const UserController = {
     },
     // 查询学生信息
     getStudentList: async (req, res) => {
-        let { name = '', major = [], grade = [], trained = '', pageSize = 5, currentPage = 1 } = req.body
-        let id
+        let { name = '', major = [], grade = [], trained = [], pageSize = 5, currentPage = 1 } = req.body
 
-        if (req.params) {
+        let id
+        if (req.params.id) {
             id = req.params.id
         }
 
@@ -282,13 +276,11 @@ const UserController = {
 
     // 更新学生信息
     changeStudentInfo: async (req, res) => {
-        // console.log(req.body)
         // 解构出数据
         let { id, number, name, password, academy, major, degree, grade } = req.body
         // 若更改了密码
         if (password) {
             // 对密码加密
-            // console.log('修改密码')
             password = await hashPassword(password)
         }
 
@@ -417,7 +409,6 @@ const UserController = {
     //#region 老师管理
     // 添加老师
     addTeacher: async (req, res) => {
-        // console.log(req.body)
         // 查找数据库是否已存在用户
         const user = await UserService.getTeacherByNumber(req.body)
         // 如果用户不存在
@@ -473,7 +464,7 @@ const UserController = {
         let { name = '', lab = [], pageSize = 5, currentPage = 1 } = req.body
         let id
 
-        if (req.params) {
+        if (req.params.id) {
             id = req.params.id
         }
         try {
@@ -491,17 +482,14 @@ const UserController = {
     },
     // 更新老师信息
     changeTeacherInfo: async (req, res) => {
-        // console.log(req.body)
         // 解构出数据
         let { id, number, name, password, phone_number, email, academy, lab } = req.body
         // 若更改了密码
         if (password) {
             // 对密码加密
-            // console.log('修改密码')
             password = await hashPassword(password)
         }
 
-        // console.log('user更新完成')
         const result = await UserService.changeTeacherInfo({
             id,
             number,
@@ -593,7 +581,7 @@ const UserController = {
         let { name = '', lab = [], pageSize = 5, currentPage = 1 } = req.body
         let id
 
-        if (req.params) {
+        if (req.params.id) {
             id = req.params.id
         }
         try {
@@ -616,7 +604,6 @@ const UserController = {
         // 若更改了密码
         if (password) {
             // 对密码加密
-            // console.log('修改密码')
             password = await hashPassword(password)
         }
 

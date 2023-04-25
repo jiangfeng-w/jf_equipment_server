@@ -11,7 +11,9 @@ router.post('/admin/equipment/add', equipmentPic.single('file'), EquipmentContro
 router.post('/admin/equipment/edit', equipmentPic.single('file'), EquipmentController.editEquipment)
 // 获取设备信息
 router.get('/admin/equipment/list/:iden', EquipmentController.getEquipmentList)
-router.get('/admin/equipment/list', EquipmentController.getEquipmentList)
+router.post('/admin/equipment/list', EquipmentController.getEquipmentList)
+// 查询长度
+router.post('/admin/equipment/listLength', EquipmentController.getEquipmentListLength)
 // 获取options
 router.get('/admin/equipment/options', EquipmentController.getOptions)
 
