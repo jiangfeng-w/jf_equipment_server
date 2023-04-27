@@ -98,6 +98,10 @@ const Equipment = sequelize.define(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        borrow_count: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+        },
         create_time: {
             type: DataTypes.BIGINT,
             allowNull: false,
