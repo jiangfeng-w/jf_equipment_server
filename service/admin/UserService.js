@@ -131,8 +131,8 @@ const UserService = {
         })
     },
     // 修改学生信息
-    changeStudentInfo: async ({ id, number, name, academy, major, degree, grade }) => {
-        return StudentModel.update({ number, name, academy, major, degree, grade }, { where: { id } })
+    changeStudentInfo: async ({ id, number, name, password, academy, major, degree, grade }) => {
+        return StudentModel.update({ number, name, password, academy, major, degree, grade }, { where: { id } })
     },
     // 删除学生
     deleteStudent: async ({ ids }) => {

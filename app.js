@@ -7,6 +7,7 @@ var logger = require('morgan')
 const UserRouter = require('./routes/admin/UserRouter')
 const EquipmentRouter = require('./routes/admin/EquipmentRouter')
 const WebEquipmentRouter = require('./routes/web/EquipmentRouter')
+const WebUserRouter = require('./routes/web/UserRouter')
 const checkToken = require('./utils/checkToken')
 
 var app = express()
@@ -32,6 +33,7 @@ app.use(UserRouter)
 app.use(EquipmentRouter)
 // 前台
 app.use(WebEquipmentRouter)
+app.use(WebUserRouter)
 
 // 全局中间件，在跳转路由时检查token是否过期
 app.use('/admin/checkToken', () => {})
