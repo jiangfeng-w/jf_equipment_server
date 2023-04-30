@@ -2,7 +2,7 @@ const UserService = require('../../service/web/UserService')
 const JWT = require('../../utils/JWT')
 const deleteAvatar = require('../../utils/deleteAvatar')
 const { hashPassword, comparePassword } = require('../../utils/encryptPassword')
-const { generateVerificationCode, sendVerificationCodeEmail } = require('../../utils/email')
+const { generateVerificationCode, sendVerificationCodeEmail, saveEmail } = require('../../utils/email')
 const { v4: uuidv4 } = require('uuid')
 
 const UserController = {
@@ -91,6 +91,8 @@ const UserController = {
         // 生成验证码
         const email_code = generateVerificationCode()
         try {
+            // 获取SMTP服务邮箱
+            await saveEmail()
             // 发送邮件
             await sendVerificationCodeEmail(email, email_code)
             // 向数据库存储验证码

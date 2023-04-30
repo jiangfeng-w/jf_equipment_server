@@ -1,28 +1,32 @@
 const nodemailer = require('nodemailer')
 const crypto = require('crypto')
+const SMTPModel = require('../models/SMTPModel')
 
-// 3096690147@qq.com
-// rawbyjhnyiqddfag
+let user
+let pass
+let transporter
 
-// 1832697406@qq.com
-// xqceatjsbfbfejcc
+const getEmail = async () => {
+    const result = await SMTPModel.findOne({ where: { current: 1 } })
+    return result
+}
 
-// ankh3096690147@163.com
-// IFOEMXTDVSLFMMST
-
-const user = '1832697406@qq.com'
-const pass = 'xqceatjsbfbfejcc'
-
-// 创建可重用的SMTP传输对象
-const transporter = nodemailer.createTransport({
-    host: 'smtp.qq.com',
-    port: 465,
-    secure: true,
-    auth: {
-        user,
-        pass,
-    },
-})
+// 调用 getEmail 函数，获取 email 值
+const saveEmail = async () => {
+    const email = await getEmail()
+    user = email.user
+    pass = email.pass
+    // 创建可重用的SMTP传输对象
+    transporter = nodemailer.createTransport({
+        host: email.host,
+        port: email.port,
+        secure: true,
+        auth: {
+            user: email.user,
+            pass: email.pass,
+        },
+    })
+}
 
 // 生成随机验证码
 const generateVerificationCode = () => {
@@ -41,6 +45,7 @@ const sendVerificationCodeEmail = (recipientEmail, rightAuthCode) => {
 
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
+                console.log(error)
                 reject(error)
             } else {
                 resolve(info.response)
@@ -52,4 +57,5 @@ const sendVerificationCodeEmail = (recipientEmail, rightAuthCode) => {
 module.exports = {
     generateVerificationCode,
     sendVerificationCodeEmail,
+    saveEmail,
 }
