@@ -68,6 +68,7 @@ const UserController = {
                         number: student.number,
                         name: student.name,
                         email: student.email,
+                        is_bind_email: student.is_bind_email,
                         avatar: student.avatar,
                         role: student.role,
                     },
@@ -77,6 +78,61 @@ const UserController = {
             // 登录失败
             res.status(404).send({
                 error: '没有此用户',
+            })
+        }
+    },
+    // 发送邮件
+    sendEmail: async (req, res) => {
+        // 解构出邮箱
+        const { email } = req.body
+        // 用token获取id
+        const token = req.headers['authorization'].split(' ')[1]
+        const origin = JWT.verify(token)
+        // 生成验证码
+        const email_code = generateVerificationCode()
+        try {
+            // 发送邮件
+            await sendVerificationCodeEmail(email, email_code)
+            // 向数据库存储验证码
+            await UserService.sendEmail(origin.id, origin.role, email_code)
+            res.status(201).send({
+                message: '验证码已发送，请注意查看邮箱',
+            })
+        } catch (error) {
+            res.status(500).send({ error })
+        }
+    },
+    // 学生绑定邮箱
+    bindEmail: async (req, res) => {
+        // 解构出邮箱
+        const { email, email_code } = req.body
+        // 用token获取id
+        const token = req.headers['authorization'].split(' ')[1]
+        const origin = JWT.verify(token)
+        // 取出数据
+        const student = await UserService.studentLogin(origin.number)
+        // 验证码正确
+        if (email_code === student.email_code) {
+            try {
+                await UserService.bindEmail(origin.id, email)
+                res.status(201).send({
+                    message: '邮箱绑定成功',
+                    data: {
+                        id: student.id,
+                        number: student.number,
+                        name: student.name,
+                        email: student.email,
+                        is_bind_email: 1,
+                        avatar: student.avatar,
+                        role: student.role,
+                    },
+                })
+            } catch (error) {
+                res.status(500).send({ error })
+            }
+        } else {
+            res.status(500).send({
+                error: '验证码不正确',
             })
         }
     },
