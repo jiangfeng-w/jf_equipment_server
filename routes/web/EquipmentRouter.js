@@ -6,5 +6,9 @@ const router = express.Router()
 router.post('/web/equipment/list', EquipmentController.getEquipmentList)
 // 获取设备信息--id
 router.get('/web/equipment/equipdata/:id', EquipmentController.getEquipmentData)
+// 获取设备预约情况--id
+router.get('/web/equipment/book/:id', EquipmentController.getEquipmentBook)
+// 预约设备
+router.post('/web/equipment/book', EquipmentController.bookEquipment)
 
 module.exports = router

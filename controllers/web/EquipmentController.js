@@ -11,9 +11,9 @@ const EquipmentController = {
                 message: '获取设备列表成功',
                 data: list,
             })
-        } catch (err) {
+        } catch (error) {
             res.status(500).send({
-                error: err.message,
+                error: error.message,
             })
         }
     },
@@ -29,7 +29,68 @@ const EquipmentController = {
             })
         } catch (error) {
             res.status(500).send({
-                error: err.message,
+                error: error.message,
+            })
+        }
+    },
+    // 获取设备预约情况
+    getEquipmentBook: async (req, res) => {
+        const { id } = req.params
+
+        try {
+            const data = await EquipmentService.getEquipmentBook(id)
+            res.status(200).send({
+                message: '获取设备预约情况成功',
+                data,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+            })
+        }
+    },
+
+    // 预约设备
+    bookEquipment: async (req, res) => {
+        const {
+            equip_id,
+            name,
+            pic,
+            apply_number,
+            apply_name,
+            apply_email,
+            role,
+            manager_number,
+            manager_name,
+            manager_email,
+            test_content,
+            book_date,
+        } = req.body
+        // 申请时间
+        const apply_time = Date.now()
+        try {
+            await EquipmentService.bookEquipment({
+                equip_id,
+                name,
+                pic,
+                apply_number,
+                apply_name,
+                apply_email,
+                role,
+                manager_number,
+                manager_name,
+                manager_email,
+                test_content,
+                book_date,
+                apply_time,
+                state: 0,
+            })
+            res.status(201).send({
+                message: '预约设备申请成功',
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
             })
         }
     },
