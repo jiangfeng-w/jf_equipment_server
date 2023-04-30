@@ -20,6 +20,17 @@ const UserController = {
             if (!result) {
                 res.status(401).send({ error: '密码错误' })
             } else {
+                // 设置token
+                const token = JWT.generate(
+                    {
+                        id: teacher.id,
+                        number: teacher.number,
+                        role: teacher.role,
+                    },
+                    '1h'
+                )
+                // 放在请求头中返回给前端
+                res.header('Authorization', token)
                 res.status(200).send({
                     message: '登录成功',
                     data: {
@@ -39,6 +50,17 @@ const UserController = {
             if (!result) {
                 res.status(401).send({ error: '密码错误' })
             } else {
+                // 设置token
+                const token = JWT.generate(
+                    {
+                        id: student.id,
+                        number: student.number,
+                        role: student.role,
+                    },
+                    '1h'
+                )
+                // 放在请求头中返回给前端
+                res.header('Authorization', token)
                 res.status(200).send({
                     message: '登录成功',
                     data: {

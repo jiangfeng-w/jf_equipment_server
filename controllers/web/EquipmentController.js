@@ -10,10 +10,12 @@ const EquipmentController = {
             res.status(200).send({
                 message: '获取设备列表成功',
                 data: list,
+                customData: req.customData,
             })
         } catch (error) {
             res.status(500).send({
                 error: error.message,
+                customData: req.customData,
             })
         }
     },
@@ -26,10 +28,12 @@ const EquipmentController = {
             res.status(200).send({
                 message: '获取设备信息成功',
                 data,
+                customData: req.customData,
             })
         } catch (error) {
             res.status(500).send({
                 error: error.message,
+                customData: req.customData,
             })
         }
     },
@@ -42,10 +46,12 @@ const EquipmentController = {
             res.status(200).send({
                 message: '获取设备预约情况成功',
                 data,
+                customData: req.customData,
             })
         } catch (error) {
             res.status(500).send({
                 error: error.message,
+                customData: req.customData,
             })
         }
     },
@@ -87,10 +93,12 @@ const EquipmentController = {
             })
             res.status(201).send({
                 message: '预约设备申请成功',
+                customData: req.customData,
             })
         } catch (error) {
             res.status(500).send({
                 error: error.message,
+                customData: req.customData,
             })
         }
     },
