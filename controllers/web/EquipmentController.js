@@ -1,6 +1,22 @@
 const EquipmentService = require('../../service/web/EquipmentService')
 
 const EquipmentController = {
+    // 获取设备预约列表
+    getBookList: async (req, res) => {
+        try {
+            const list = await EquipmentService.getBookList()
+            res.status(200).send({
+                message: '获取设备预约列表成功',
+                data: list,
+                customData: req.customData,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
     // 获取设备列表
     getEquipmentList: async (req, res) => {
         const { pageSize = 12, currentPage = 1 } = req.body

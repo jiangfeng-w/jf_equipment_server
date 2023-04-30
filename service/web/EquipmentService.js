@@ -4,6 +4,12 @@ const { Sequelize } = require('sequelize')
 const { Op } = require('sequelize')
 
 const EquipmentService = {
+    // 获取设备预约列表
+    getBookList: async () => {
+        return BookModel.findAll({
+            order: [['apply_time', 'DESC']],
+        })
+    },
     // 获取设备列表
     getEquipmentList: async (pageSize, currentPage) => {
         return EquipmentModel.findAll({
