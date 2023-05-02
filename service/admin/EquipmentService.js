@@ -1,6 +1,7 @@
 const EquipmentModel = require('../../models/EquipmentModel')
 const RepairModel = require('../../models/RepairModel')
 const ScrapModel = require('../../models/ScrapModel')
+const BookModel = require('../../models/BookModel')
 const { Sequelize } = require('sequelize')
 const { Op } = require('sequelize')
 
@@ -375,6 +376,24 @@ const EquipmentService = {
     refuseScrap: async ({ id, approve_time }) => {
         return ScrapModel.update({ state: 1, approve_time }, { where: { id } })
     },
+    //#endregion
+
+    //#region 设备预约
+    getBookList: async iden => {
+        if (iden && iden.length === 12) {
+            return BookModel.findAll({
+                where: { manager_number: iden },
+                order: [['apply_time', 'DESC']],
+            })
+        } else {
+            return BookModel.findAll({
+                order: [['apply_time', 'DESC']],
+                offset: 0,
+                limit: 10,
+            })
+        }
+    },
+
     //#endregion
 }
 

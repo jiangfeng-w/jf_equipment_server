@@ -424,6 +424,28 @@ const EquipmentController = {
         }
     },
     //#endregion
+
+    //#region 设备预约
+    // 获取设备预约列表
+    getBookList: async (req, res) => {
+        let iden
+        if (req.params.iden) {
+            iden = req.params.iden
+        }
+        try {
+            const list = await EquipmentService.getBookList(iden)
+            res.status(200).send({
+                message: '获取设备预约列表成功',
+                data: list,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+            })
+        }
+    },
+
+    //#endregion
 }
 
 module.exports = EquipmentController
