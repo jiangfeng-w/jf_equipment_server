@@ -14,6 +14,48 @@ const UserService = {
             where: { number },
         })
     },
+    // 个人中心修改信息
+    changeOwnInfo: async ({ id, email, phone_number, avatar, role }) => {
+        if (role === 3) {
+            return TeacherModel.update(
+                { email, phone_number, avatar },
+                {
+                    where: {
+                        id,
+                    },
+                }
+            )
+        } else {
+            return StudentModel.update(
+                { email, phone_number, avatar },
+                {
+                    where: {
+                        id,
+                    },
+                }
+            )
+        }
+    },
+    // 个人中心密码
+    changePass: async ({ id, role, password }) => {
+        if (role === 3) {
+            return TeacherModel.update({ password }, { where: { id } })
+        } else {
+            return StudentModel.update({ password }, { where: { id } })
+        }
+    },
+    // 获取用户信息
+    getInfoByID: async (id, role) => {
+        if (role === 3) {
+            return TeacherModel.findOne({
+                where: { id },
+            })
+        } else {
+            return StudentModel.findOne({
+                where: { id },
+            })
+        }
+    },
 
     // 存储验证码
     sendEmail: async (id, role, email_code) => {

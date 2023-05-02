@@ -418,9 +418,10 @@ const EquipmentService = {
             })
         } else {
             return BookModel.findAll({
-                order: [['apply_time', 'DESC']],
-                offset: 0,
-                limit: 10,
+                order: [
+                    ['state', 'ASC'],
+                    ['apply_time', 'DESC'],
+                ],
             })
         }
     },
