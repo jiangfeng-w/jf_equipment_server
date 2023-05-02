@@ -47,5 +47,9 @@ router.post('/admin/scrap/refuse', EquipmentController.refuseScrap)
 // 设备预约列表
 router.get('/admin/equipment/getBookList/:iden', EquipmentController.getBookList)
 router.get('/admin/equipment/getBookList', EquipmentController.getBookList)
+// 同意预约申请
+router.post('/admin/book/agree', EquipmentController.agreeBook)
+// 拒绝预约申请
+router.post('/admin/book/refuse', EquipmentController.refuseBook)
 
 module.exports = router

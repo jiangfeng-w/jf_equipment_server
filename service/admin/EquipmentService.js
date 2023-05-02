@@ -393,6 +393,18 @@ const EquipmentService = {
             })
         }
     },
+    // 同意报废申请
+    agreeBook: async (id, approve_time) => {
+        return BookModel.update({ state: 2, approve_time }, { where: { id } })
+    },
+    // 添加预约次数
+    agreeBookEquip: async id => {
+        return EquipmentModel.increment({ borrow_count: 1 }, { where: { id } })
+    },
+    // 拒绝报废申请
+    refuseBook: async (id, approve_time) => {
+        return BookModel.update({ state: 1, approve_time }, { where: { id } })
+    },
 
     //#endregion
 }

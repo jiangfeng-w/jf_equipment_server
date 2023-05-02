@@ -444,6 +444,33 @@ const EquipmentController = {
             })
         }
     },
+    // 同意预约申请
+    agreeBook: async (req, res) => {
+        // 审批时间
+        const approve_time = Date.now()
+        try {
+            await EquipmentService.agreeBook(req.body.id, approve_time)
+            await EquipmentService.agreeBookEquip(req.body.equip_id)
+            res.status(201).send({
+                message: '操作成功',
+            })
+        } catch (error) {
+            res.status(500).send({ error: `${error} 操作失败` })
+        }
+    },
+    // 拒绝预约申请
+    refuseBook: async (req, res) => {
+        // 审批时间
+        const approve_time = Date.now()
+        try {
+            await EquipmentService.refuseBook(req.body.id, approve_time)
+            res.status(201).send({
+                message: '操作成功',
+            })
+        } catch (error) {
+            res.status(500).send({ error: `${error} 操作失败` })
+        }
+    },
 
     //#endregion
 }
