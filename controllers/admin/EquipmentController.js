@@ -426,6 +426,24 @@ const EquipmentController = {
     //#endregion
 
     //#region 设备预约
+    // 获取首页设备预约列表
+    getHomeBookList: async (req, res) => {
+        const { date } = req.params
+        try {
+            // 设置预约状态过期
+            await EquipmentService.setExpire(date)
+            // 获取列表
+            const list = await EquipmentService.getHomeBookList(date)
+            res.status(200).send({
+                message: '获取设备预约列表成功',
+                data: list,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+            })
+        }
+    },
     // 获取设备预约列表
     getBookList: async (req, res) => {
         let iden

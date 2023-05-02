@@ -3,8 +3,12 @@ const EquipmentService = require('../../service/web/EquipmentService')
 const EquipmentController = {
     // 获取设备预约列表
     getBookList: async (req, res) => {
+        const { date } = req.params
         try {
-            const list = await EquipmentService.getBookList()
+            // 设置预约状态过期
+            await EquipmentService.setExpire(date)
+            // 获取列表
+            const list = await EquipmentService.getBookList(date)
             res.status(200).send({
                 message: '获取设备预约列表成功',
                 data: list,

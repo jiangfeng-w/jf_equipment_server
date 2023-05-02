@@ -3,7 +3,7 @@ const EquipmentController = require('../../controllers/web/EquipmentController')
 
 const router = express.Router()
 // 获取设备预约列表
-router.get('/web/equipment/getBookList', EquipmentController.getBookList)
+router.get('/web/equipment/getBookList/:date', EquipmentController.getBookList)
 // 获取设备列表
 router.post('/web/equipment/list', EquipmentController.getEquipmentList)
 // 获取设备信息--id

@@ -379,11 +379,42 @@ const EquipmentService = {
     //#endregion
 
     //#region 设备预约
+    // 设置预约设备过期
+    setExpire: async date => {
+        return BookModel.update(
+            { state: 4 },
+            {
+                where: {
+                    book_date: {
+                        [Op.lt]: date,
+                    },
+                    state: 0,
+                },
+            }
+        )
+    },
+    // 首页预约列表
+    getHomeBookList: async date => {
+        return BookModel.findAll({
+            where: {
+                state: { [Op.ne]: 4 },
+                book_date: {
+                    [Op.gte]: date,
+                },
+            },
+            order: [['apply_time', 'DESC']],
+            offset: 0,
+            limit: 10,
+        })
+    },
     getBookList: async iden => {
         if (iden && iden.length === 12) {
             return BookModel.findAll({
                 where: { manager_number: iden },
-                order: [['apply_time', 'DESC']],
+                order: [
+                    ['state', 'ASC'],
+                    ['apply_time', 'DESC'],
+                ],
             })
         } else {
             return BookModel.findAll({

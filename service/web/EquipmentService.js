@@ -4,9 +4,29 @@ const { Sequelize } = require('sequelize')
 const { Op } = require('sequelize')
 
 const EquipmentService = {
+    // 设置预约设备过期
+    setExpire: async date => {
+        return BookModel.update(
+            { state: 4 },
+            {
+                where: {
+                    book_date: {
+                        [Op.lt]: date,
+                    },
+                    state: 0,
+                },
+            }
+        )
+    },
     // 获取设备预约列表
-    getBookList: async () => {
+    getBookList: async date => {
         return BookModel.findAll({
+            where: {
+                state: { [Op.ne]: 4 },
+                book_date: {
+                    [Op.gte]: date,
+                },
+            },
             order: [['apply_time', 'DESC']],
         })
     },

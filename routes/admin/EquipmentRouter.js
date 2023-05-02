@@ -44,9 +44,11 @@ router.post('/admin/scrap/agree', EquipmentController.agreeScrap)
 // 拒绝维修申请
 router.post('/admin/scrap/refuse', EquipmentController.refuseScrap)
 
+// 首页
+router.get('/admin/equipment/getBookList/:date', EquipmentController.getHomeBookList)
 // 设备预约列表
-router.get('/admin/equipment/getBookList/:iden', EquipmentController.getBookList)
-router.get('/admin/equipment/getBookList', EquipmentController.getBookList)
+router.post('/admin/equipment/getBookList/:iden', EquipmentController.getBookList)
+router.post('/admin/equipment/getBookList', EquipmentController.getBookList)
 // 同意预约申请
 router.post('/admin/book/agree', EquipmentController.agreeBook)
 // 拒绝预约申请
