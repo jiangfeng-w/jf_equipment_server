@@ -172,7 +172,7 @@ const UserController = {
 
         // isRight为false，则原密码错误
         if (!isRight) {
-            res.status(500).send({
+            res.status(404).send({
                 message: '原密码错误',
                 customData: req.customData,
             })
@@ -201,24 +201,29 @@ const UserController = {
     // 发送邮件
     sendEmail: async (req, res) => {
         // 解构出邮箱
-        const { email } = req.body
-        // 用token获取id
-        const token = req.headers['authorization'].split(' ')[1]
-        const origin = JWT.verify(token)
-        // 生成验证码
-        const email_code = generateVerificationCode()
-        try {
-            // 获取SMTP服务邮箱
-            await saveEmail()
-            // 发送邮件
-            await sendVerificationCodeEmail(email, email_code)
-            // 向数据库存储验证码
-            await UserService.sendEmail(origin.id, origin.role, email_code)
-            res.status(201).send({
-                message: '验证码已发送，请注意查看邮箱',
-            })
-        } catch (error) {
-            res.status(500).send({ error })
+        const { number, email } = req.body
+        // 从数据库取出数据
+        const teacher = await UserService.teacherLogin(number)
+        const student = await UserService.studentLogin(number)
+        const user = teacher || student
+        if (user) {
+            // 生成验证码
+            const email_code = generateVerificationCode()
+            try {
+                // 获取SMTP服务邮箱
+                await saveEmail()
+                // 发送邮件
+                await sendVerificationCodeEmail(email, email_code)
+                // 向数据库存储验证码
+                await UserService.sendEmail(user.id, user.role, email_code)
+                res.status(201).send({
+                    message: '验证码已发送，请注意查看邮箱',
+                })
+            } catch (error) {
+                res.status(500).send({ error: error.message })
+            }
+        } else {
+            res.status(404).send({ error: '该用户不存在' })
         }
     },
     // 学生绑定邮箱
@@ -254,6 +259,46 @@ const UserController = {
             res.status(500).send({
                 error: '验证码不正确',
             })
+        }
+    },
+    // 重置密码
+    resetPass: async (req, res) => {
+        // 解构出所需数据
+        const { number, authCode, newPassword } = req.body
+        // 从数据库取出数据
+        const teacher = await UserService.teacherLogin(number)
+        const student = await UserService.studentLogin(number)
+        const user = teacher || student
+        if (user) {
+            // 验证码正确
+            if (authCode === user.email_code) {
+                try {
+                    // 对新密码加密
+                    const password = await hashPassword(newPassword)
+                    // 更新密码
+                    await UserService.changePass({
+                        id: user.id,
+                        role: user.role,
+                        password,
+                    })
+                    // 删除验证码
+                    await UserService.removeEmailCode({
+                        id: user.id,
+                        role: user.role,
+                    })
+                    res.status(200).send({
+                        message: '密码修改成功',
+                    })
+                } catch (error) {
+                    res.status(500).send({ error: error.message })
+                }
+            } else {
+                res.status(404).send({
+                    error: '验证码不正确',
+                })
+            }
+        } else {
+            res.status(404).send({ error: '该用户不存在' })
         }
     },
 }

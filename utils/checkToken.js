@@ -1,7 +1,14 @@
 const JWT = require('./JWT')
 
 // 不需要重新生成token的情况
-const noTokenCheck = ['/admin/user/login', '/admin/resetPass', '/admin/sendEmail', '/web/user/login', '/web/sendEmail']
+const noTokenCheck = [
+    '/admin/user/login',
+    '/admin/resetPass',
+    '/admin/sendEmail',
+    '/web/user/login',
+    '/web/sendEmail',
+    '/web/resetPass',
+]
 
 function checkToken(req, res, next) {
     // 不需要重新生成token

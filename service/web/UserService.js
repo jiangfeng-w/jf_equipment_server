@@ -56,7 +56,6 @@ const UserService = {
             })
         }
     },
-
     // 存储验证码
     sendEmail: async (id, role, email_code) => {
         if (role === 3) {
@@ -65,7 +64,14 @@ const UserService = {
             return StudentModel.update({ email_code }, { where: { id } })
         }
     },
-
+    // 删除验证码
+    removeEmailCode: async ({ id, role }) => {
+        if (role === 3) {
+            return TeacherModel.update({ email_code: null }, { where: { id } })
+        } else {
+            return StudentModel.update({ email_code: null }, { where: { id } })
+        }
+    },
     // 学生绑定邮箱
     bindEmail: async (id, email) => {
         // 删除验证码，并存储邮箱

@@ -15,5 +15,7 @@ router.post('/web/changePass', UserController.changePass)
 router.post('/web/sendEmail', UserController.sendEmail)
 // 学生绑定邮箱
 router.post('/web/student/bindEmail', UserController.bindEmail)
+// 忘记密码重置
+router.post('/web/resetPass', UserController.resetPass)
 
 module.exports = router
