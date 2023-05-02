@@ -478,10 +478,11 @@ const EquipmentController = {
     },
     // 拒绝预约申请
     refuseBook: async (req, res) => {
+        const { id, refuse_reason } = req.body
         // 审批时间
         const approve_time = Date.now()
         try {
-            await EquipmentService.refuseBook(req.body.id, approve_time)
+            await EquipmentService.refuseBook(id, refuse_reason, approve_time)
             res.status(201).send({
                 message: '操作成功',
             })

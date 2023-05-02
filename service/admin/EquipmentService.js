@@ -433,8 +433,8 @@ const EquipmentService = {
         return EquipmentModel.increment({ borrow_count: 1 }, { where: { id } })
     },
     // 拒绝报废申请
-    refuseBook: async (id, approve_time) => {
-        return BookModel.update({ state: 1, approve_time }, { where: { id } })
+    refuseBook: async (id, refuse_reason, approve_time) => {
+        return BookModel.update({ state: 1, refuse_reason, approve_time }, { where: { id } })
     },
 
     //#endregion
