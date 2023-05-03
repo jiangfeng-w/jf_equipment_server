@@ -77,6 +77,7 @@ const UserController = {
                         academy: student.academy,
                         create_time: student.create_time,
                         is_bind_email: student.is_bind_email,
+                        trained: student.trained,
                     },
                 })
             }
@@ -147,6 +148,7 @@ const UserController = {
                         academy: user.academy,
                         create_time: user.create_time,
                         is_bind_email: user.is_bind_email,
+                        trained: user.trained,
                     },
                     customData: req.customData,
                 })
