@@ -152,6 +152,14 @@ const EquipmentService = {
             submit_time,
         })
     },
+
+    // 成果列表
+    getResultList: async iden => {
+        return ReaultModel.findAll({
+            where: { apply_number: iden },
+            // order: [['id', 'DESC']],
+        })
+    },
 }
 
 module.exports = EquipmentService

@@ -20,4 +20,7 @@ router.post('/web/equipment/getBookList', EquipmentController.getBookList)
 router.post('/web/book/cancel', EquipmentController.cancelBook)
 // 使用完成
 router.post('/web/book/useOutput', EquipmentController.useOutput)
+
+// 成果列表
+router.post('/web/equipment/getResultList/:iden', EquipmentController.getResultList)
 module.exports = router

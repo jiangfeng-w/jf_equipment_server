@@ -208,6 +208,24 @@ const EquipmentController = {
             })
         }
     },
+
+    // 成果列表
+    getResultList: async (req, res) => {
+        const { iden } = req.params
+        try {
+            const list = await EquipmentService.getResultList(iden)
+            res.status(200).send({
+                message: '获取产出成果列表成功',
+                data: list,
+                customData: req.customData,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
 }
 
 module.exports = EquipmentController
