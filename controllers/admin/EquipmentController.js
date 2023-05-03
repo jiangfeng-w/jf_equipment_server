@@ -492,6 +492,25 @@ const EquipmentController = {
     },
 
     //#endregion
+
+    // 成果产出列表
+    getResultList: async (req, res) => {
+        let iden
+        if (req.params.iden) {
+            iden = req.params.iden
+        }
+        try {
+            const list = await EquipmentService.getResultList(iden)
+            res.status(200).send({
+                message: '获取成果列表成功',
+                data: list,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+            })
+        }
+    },
 }
 
 module.exports = EquipmentController

@@ -2,6 +2,7 @@ const EquipmentModel = require('../../models/EquipmentModel')
 const RepairModel = require('../../models/RepairModel')
 const ScrapModel = require('../../models/ScrapModel')
 const BookModel = require('../../models/BookModel')
+const ReaultModel = require('../../models/ResultModel')
 const { Sequelize } = require('sequelize')
 const { Op } = require('sequelize')
 
@@ -439,6 +440,20 @@ const EquipmentService = {
     },
 
     //#endregion
+
+    // 成果列表
+    getResultList: async manager_number => {
+        if (manager_number && manager_number.length === 12) {
+            return ReaultModel.findAll({
+                where: { manager_number },
+                order: [['submit_time', 'DESC']],
+            })
+        } else {
+            return ReaultModel.findAll({
+                order: [['submit_time', 'DESC']],
+            })
+        }
+    },
 }
 
 module.exports = EquipmentService
