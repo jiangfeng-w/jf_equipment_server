@@ -408,6 +408,15 @@ const EquipmentService = {
             limit: 10,
         })
     },
+    // 获取首页热门设备排行榜
+    getRangList: async () => {
+        return EquipmentModel.findAll({
+            order: [['borrow_count', 'DESC']],
+            offset: 0,
+            limit: 10,
+            attributes: ['name', 'borrow_count'],
+        })
+    },
     getBookList: async iden => {
         if (iden && iden.length === 12) {
             return BookModel.findAll({

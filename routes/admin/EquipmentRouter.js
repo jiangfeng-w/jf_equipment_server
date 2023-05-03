@@ -46,6 +46,9 @@ router.post('/admin/scrap/refuse', EquipmentController.refuseScrap)
 
 // 首页
 router.get('/admin/equipment/getBookList/:date', EquipmentController.getHomeBookList)
+// 获取热门设备
+router.get('/admin/equipment/getRangList', EquipmentController.getRangList)
+
 // 设备预约列表
 router.post('/admin/equipment/getBookList/:iden', EquipmentController.getBookList)
 router.post('/admin/equipment/getBookList', EquipmentController.getBookList)
