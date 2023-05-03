@@ -1,5 +1,6 @@
 const EquipmentModel = require('../../models/EquipmentModel')
 const BookModel = require('../../models/BookModel')
+const ReaultModel = require('../../models/ResultModel')
 const { Sequelize } = require('sequelize')
 const { Op } = require('sequelize')
 
@@ -18,11 +19,14 @@ const EquipmentService = {
             }
         )
     },
-    // 获取设备预约列表
-    getBookList: async date => {
+    // 首页设备预约列表
+    getHomeBookList: async date => {
         return BookModel.findAll({
             where: {
-                state: { [Op.ne]: 4 },
+                // state: { [Op.ne]: 4 },
+                state: {
+                    [Op.in]: [0, 1, 2],
+                },
                 book_date: {
                     [Op.gte]: date,
                 },
@@ -51,6 +55,9 @@ const EquipmentService = {
         return BookModel.findAll({
             where: {
                 equip_id: id,
+                state: {
+                    [Op.in]: [0, 1],
+                },
             },
             attributes: ['apply_number', 'book_date'],
         })
@@ -88,6 +95,61 @@ const EquipmentService = {
             book_date,
             apply_time,
             state,
+        })
+    },
+    // 设备预约列表
+    getBookList: async iden => {
+        if (iden && iden.length === 12) {
+            return BookModel.findAll({
+                where: { apply_number: iden },
+                order: [['apply_time', 'DESC']],
+            })
+        } else {
+            return BookModel.findAll({
+                order: [['apply_time', 'DESC']],
+            })
+        }
+    },
+
+    // 取消预约
+    cancelBook: async id => {
+        return BookModel.update({ state: 5 }, { where: { id } })
+    },
+    // 使用完成——成果提交
+    useOutput: async ({
+        book_id,
+        equip_id,
+        name,
+        pic,
+        apply_number,
+        apply_name,
+        apply_email,
+        role,
+        manager_number,
+        manager_name,
+        manager_email,
+        test_content,
+        book_date,
+        use_results,
+        submit_time,
+    }) => {
+        BookModel.update({ state: 3 }, { where: { id: book_id } })
+        return ReaultModel.create({
+            book_id,
+            equip_id,
+            name,
+            pic,
+            apply_number,
+            apply_name,
+            apply_email,
+            role,
+            manager_number,
+            manager_name,
+            manager_email,
+            test_content,
+            book_date,
+            use_results,
+            submit_time,
         })
     },
 }

@@ -2,13 +2,13 @@ const EquipmentService = require('../../service/web/EquipmentService')
 
 const EquipmentController = {
     // 获取设备预约列表
-    getBookList: async (req, res) => {
+    getHomeBookList: async (req, res) => {
         const { date } = req.params
         try {
             // 设置预约状态过期
             await EquipmentService.setExpire(date)
             // 获取列表
-            const list = await EquipmentService.getBookList(date)
+            const list = await EquipmentService.getHomeBookList(date)
             res.status(200).send({
                 message: '获取设备预约列表成功',
                 data: list,
@@ -116,6 +116,92 @@ const EquipmentController = {
                 customData: req.customData,
             })
         } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
+    // 获取设备预约列表
+    getBookList: async (req, res) => {
+        let iden
+        if (req.params.iden) {
+            iden = req.params.iden
+        }
+        try {
+            const list = await EquipmentService.getBookList(iden)
+            res.status(200).send({
+                message: '获取设备预约列表成功',
+                data: list,
+                customData: req.customData,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
+
+    // 取消预约
+    cancelBook: async (req, res) => {
+        const { id } = req.body
+        try {
+            await EquipmentService.cancelBook(id)
+            res.status(200).send({
+                message: '预约取消成功',
+                customData: req.customData,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
+    // 使用完成
+    useOutput: async (req, res) => {
+        const {
+            id: book_id,
+            equip_id,
+            name,
+            pic,
+            apply_number,
+            apply_name,
+            apply_email,
+            role,
+            manager_number,
+            manager_name,
+            manager_email,
+            test_content,
+            book_date,
+            use_results,
+        } = req.body
+        const submit_time = Date.now()
+        try {
+            await EquipmentService.useOutput({
+                book_id,
+                equip_id,
+                name,
+                pic,
+                apply_number,
+                apply_name,
+                apply_email,
+                role,
+                manager_number,
+                manager_name,
+                manager_email,
+                test_content,
+                book_date,
+                use_results,
+                submit_time,
+            })
+            res.status(201).send({
+                message: '成果提交成功',
+                customData: req.customData,
+            })
+        } catch (error) {
+            console.log(error.message)
             res.status(500).send({
                 error: error.message,
                 customData: req.customData,

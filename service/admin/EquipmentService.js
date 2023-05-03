@@ -397,7 +397,7 @@ const EquipmentService = {
     getHomeBookList: async date => {
         return BookModel.findAll({
             where: {
-                state: { [Op.ne]: 4 },
+                state: { [Op.in]: [0, 1, 2] },
                 book_date: {
                     [Op.gte]: date,
                 },
@@ -413,29 +413,29 @@ const EquipmentService = {
                 where: { manager_number: iden },
                 order: [
                     ['state', 'ASC'],
-                    ['apply_time', 'DESC'],
+                    ['book_date', 'DESC'],
                 ],
             })
         } else {
             return BookModel.findAll({
                 order: [
                     ['state', 'ASC'],
-                    ['apply_time', 'DESC'],
+                    ['book_date', 'DESC'],
                 ],
             })
         }
     },
-    // 同意报废申请
+    // 同意预约申请
     agreeBook: async (id, approve_time) => {
-        return BookModel.update({ state: 2, approve_time }, { where: { id } })
+        return BookModel.update({ state: 1, approve_time }, { where: { id } })
     },
     // 添加预约次数
     agreeBookEquip: async id => {
         return EquipmentModel.increment({ borrow_count: 1 }, { where: { id } })
     },
-    // 拒绝报废申请
+    // 拒绝预约申请
     refuseBook: async (id, refuse_reason, approve_time) => {
-        return BookModel.update({ state: 1, refuse_reason, approve_time }, { where: { id } })
+        return BookModel.update({ state: 2, refuse_reason, approve_time }, { where: { id } })
     },
 
     //#endregion
