@@ -21,6 +21,24 @@ const EquipmentController = {
             })
         }
     },
+    // 获取首页热门设备排行榜
+    getRangList: async (req, res) => {
+        try {
+            // 获取列表
+            const list = await EquipmentService.getRangList()
+            res.status(200).send({
+                message: '获取排行榜成功',
+                data: list,
+                customData: req.customData,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
+
     // 获取设备列表
     getEquipmentList: async (req, res) => {
         const { pageSize = 12, currentPage = 1 } = req.body

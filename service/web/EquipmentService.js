@@ -19,6 +19,16 @@ const EquipmentService = {
             }
         )
     },
+    // 获取首页热门设备排行榜
+    getRangList: async () => {
+        return EquipmentModel.findAll({
+            order: [['borrow_count', 'DESC']],
+            offset: 0,
+            limit: 10,
+            attributes: ['name', 'borrow_count'],
+        })
+    },
+
     // 首页设备预约列表
     getHomeBookList: async date => {
         return BookModel.findAll({
