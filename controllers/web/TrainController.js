@@ -8,9 +8,35 @@ const TrainController = {
             res.status(200).send({
                 message: '获取培训课程成功',
                 data: list,
+                customData: req.customData,
             })
         } catch (error) {
-            res.status(500).send({ error: error.message })
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
+    // 报名培训课程
+    signUpCourse: async (req, res) => {
+        const data = req.body
+        data.create_time = Date.now()
+        data.signup_count += 1
+        if (data.signup_count === data.train_total_count) {
+            data.is_full_count = 1
+        }
+        try {
+            await TrainService.plusCourseCount(data.course_id, data.signup_count, data.is_full_count)
+            await TrainService.signUpCourse(data)
+            res.status(201).send({
+                message: '报名课程成功',
+                customData: req.customData,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
         }
     },
 }

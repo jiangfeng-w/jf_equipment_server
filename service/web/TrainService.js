@@ -9,6 +9,14 @@ const TrainService = {
             order: [['state', 'ASC']],
         })
     },
+    // 报名培训课程
+    // 课程表人数
+    plusCourseCount: async (id, signup_count, is_full_count) => {
+        return CourseModel.update({ signup_count, is_full_count }, { where: { id } })
+    },
+    signUpCourse: async data => {
+        return TrainModel.create(data)
+    },
 }
 
 module.exports = TrainService
