@@ -4,10 +4,12 @@ var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
 
-const UserRouter = require('./routes/admin/UserRouter')
-const EquipmentRouter = require('./routes/admin/EquipmentRouter')
+const AdminUserRouter = require('./routes/admin/UserRouter')
+const AdminEquipmentRouter = require('./routes/admin/EquipmentRouter')
+const AdminTrainRouter = require('./routes/admin/TrainRouter')
 const WebEquipmentRouter = require('./routes/web/EquipmentRouter')
 const WebUserRouter = require('./routes/web/UserRouter')
+const WebTrainRouter = require('./routes/web/TrainRouter')
 const checkToken = require('./utils/checkToken')
 
 var app = express()
@@ -29,11 +31,13 @@ app.use(express.static(path.join(__dirname, 'public')))
 app.use(checkToken)
 
 // 后台
-app.use(UserRouter)
-app.use(EquipmentRouter)
+app.use(AdminUserRouter)
+app.use(AdminEquipmentRouter)
+app.use(AdminTrainRouter)
 // 前台
 app.use(WebEquipmentRouter)
 app.use(WebUserRouter)
+app.use(WebTrainRouter)
 
 // 全局中间件，在跳转路由时检查token是否过期
 app.use('/admin/checkToken', () => {})
