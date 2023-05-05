@@ -39,6 +39,18 @@ const TrainService = {
             create_time,
         })
     },
+    // 获取培训课程列表
+    trainCourseList: async manager_number => {
+        if (manager_number) {
+            return CourseModel.findAll({
+                where: {
+                    manager_number,
+                },
+            })
+        } else {
+            return CourseModel.findAll()
+        }
+    },
 }
 
 module.exports = TrainService

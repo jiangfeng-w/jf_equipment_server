@@ -46,6 +46,23 @@ const TrainController = {
             res.status(500).send({ error: error.message })
         }
     },
+    // 培训课程列表
+    trainCourseList: async (req, res) => {
+        let manager_number
+        if (req.params.iden) {
+            manager_number = req.params.iden
+        }
+
+        try {
+            const list = await TrainService.trainCourseList(manager_number)
+            res.status(200).send({
+                message: '获取培训课程成功',
+                data: list,
+            })
+        } catch (error) {
+            res.status(500).send({ error: error.message })
+        }
+    },
 }
 
 module.exports = TrainController
