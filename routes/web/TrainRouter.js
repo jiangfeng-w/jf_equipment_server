@@ -6,5 +6,7 @@ const router = express.Router()
 router.get('/web/train/trainCourseList', TrainController.trainCourseList)
 // 报名培训课程
 router.post('/web/train/signUpCourse', TrainController.signUpCourse)
+// 获取我报名的课程列表
+router.get('/web/train/myCourseList/:iden', TrainController.myCourseList)
 
 module.exports = router

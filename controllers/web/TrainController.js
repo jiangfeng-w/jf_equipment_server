@@ -39,6 +39,23 @@ const TrainController = {
             })
         }
     },
+    // 获取我报名的课程
+    myCourseList: async (req, res) => {
+        const { iden: student_number } = req.params
+        try {
+            const list = await TrainService.myCourseList(student_number)
+            res.status(200).send({
+                message: '报名课程查询成功',
+                data: list,
+                customData: req.customData,
+            })
+        } catch (error) {
+            res.status(500).send({
+                error: error.message,
+                customData: req.customData,
+            })
+        }
+    },
 }
 
 module.exports = TrainController
