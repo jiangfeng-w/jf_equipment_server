@@ -12,8 +12,8 @@ const TrainService = {
 
     // 报名培训课程
     // 课程表
-    plusCourseCount: async (id, signup_count, is_full_count) => {
-        return CourseModel.update({ signup_count, is_full_count }, { where: { id } })
+    plusCourseCount: async (id, signup_count) => {
+        return CourseModel.update({ signup_count }, { where: { id } })
     },
     // 报名表
     signUpCourse: async data => {

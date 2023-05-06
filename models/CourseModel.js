@@ -50,10 +50,6 @@ const Course = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        is_full_count: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
         signup_deadline: {
             type: DataTypes.INTEGER,
             allowNull: false,

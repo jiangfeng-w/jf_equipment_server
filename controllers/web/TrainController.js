@@ -22,11 +22,8 @@ const TrainController = {
         const data = req.body
         data.create_time = Date.now()
         data.signup_count += 1
-        if (data.signup_count === data.train_total_count) {
-            data.is_full_count = 1
-        }
         try {
-            await TrainService.plusCourseCount(data.course_id, data.signup_count, data.is_full_count)
+            await TrainService.plusCourseCount(data.course_id, data.signup_count)
             await TrainService.signUpCourse(data)
             res.status(201).send({
                 message: '报名课程成功',

@@ -38,6 +38,10 @@ const Train = sequelize.define(
             type: DataTypes.INTEGER,
             allowNull: false,
         },
+        approval_time: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },
         tips: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -83,10 +87,6 @@ const Train = sequelize.define(
             allowNull: false,
         },
         signup_count: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        is_full_count: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
