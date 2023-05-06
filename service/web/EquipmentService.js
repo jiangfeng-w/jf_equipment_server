@@ -1,6 +1,7 @@
 const EquipmentModel = require('../../models/EquipmentModel')
 const BookModel = require('../../models/BookModel')
 const ReaultModel = require('../../models/ResultModel')
+const TrainModel = require('../../models/TrainModel')
 const { Sequelize } = require('sequelize')
 const { Op } = require('sequelize')
 
@@ -50,6 +51,22 @@ const EquipmentService = {
             order: [['manager_number', 'ASC']],
             offset: (currentPage - 1) * pageSize,
             limit: pageSize,
+        })
+    },
+    // 从培训表中获取已经培训的学生列表
+    getTrainedList: async id => {
+        // 获取设备名称
+        const equip_name = await EquipmentModel.findOne({
+            where: { id },
+            attributes: ['name'],
+        })
+        // 再用设备名称在培训表找出所有培训完成的学生
+        return TrainModel.findAll({
+            where: {
+                equip_name: equip_name.dataValues.name,
+                state: 4,
+            },
+            attributes: ['student_number'],
         })
     },
     // 获取设备信息--id

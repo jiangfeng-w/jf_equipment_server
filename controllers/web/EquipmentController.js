@@ -80,10 +80,15 @@ const EquipmentController = {
         const { id } = req.params
 
         try {
+            // 从培训表中查询出已经培训过的学生
+            const list = await EquipmentService.getTrainedList(id)
+            const trainedList = list.map(i => i.student_number)
+
             const data = await EquipmentService.getEquipmentBook(id)
             res.status(200).send({
                 message: '获取设备预约情况成功',
                 data,
+                trainedList,
                 customData: req.customData,
             })
         } catch (error) {
