@@ -63,6 +63,43 @@ const TrainController = {
             res.status(500).send({ error: error.message })
         }
     },
+    // 根据课程id获取课程报名表
+    signUpList: async (req, res) => {
+        try {
+            const list = await TrainService.signUpList(req.params.course_id)
+            res.status(200).send({
+                message: '获取报名表成功',
+                data: list,
+            })
+        } catch (error) {
+            res.status(500).send({ error: error.message })
+        }
+    },
+
+    // 同意报名
+    agree: async (req, res) => {
+        const { id } = req.body
+        try {
+            await TrainService.agree(id)
+            res.status(200).send({
+                message: '同意申请成功',
+            })
+        } catch (error) {
+            res.status(500).send({ error: error.message })
+        }
+    },
+    // 拒绝报名
+    refuse: async (req, res) => {
+        const { id, course_id } = req.body
+        try {
+            await TrainService.refuse(id, course_id)
+            res.status(200).send({
+                message: '拒绝申请成功',
+            })
+        } catch (error) {
+            res.status(500).send({ error: error.message })
+        }
+    },
 }
 
 module.exports = TrainController

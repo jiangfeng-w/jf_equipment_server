@@ -51,6 +51,23 @@ const TrainService = {
             return CourseModel.findAll()
         }
     },
+    // 根据课程id获取报名表
+    signUpList: async course_id => {
+        return TrainModel.findAll({
+            where: { course_id, state: 0 },
+        })
+    },
+    // 同意报名
+    agree: async (id, approval_time = Date.now()) => {
+        return TrainModel.update({ state: 2, approval_time }, { where: { id } })
+    },
+    // 拒绝报名
+    refuse: async (id, course_id, approval_time = Date.now()) => {
+        // 减少报名人数
+        await CourseModel.decrement({ signup_count: 1 }, { where: { id: course_id } })
+        // 改变报名状态
+        await TrainModel.update({ state: 1, approval_time }, { where: { id } })
+    },
 }
 
 module.exports = TrainService
