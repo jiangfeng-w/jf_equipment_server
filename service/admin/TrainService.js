@@ -18,6 +18,7 @@ const TrainService = {
         signup_deadline,
         train_start,
         train_end,
+        state,
         tips,
         create_time,
     }) => {
@@ -35,6 +36,7 @@ const TrainService = {
             signup_deadline,
             train_start,
             train_end,
+            state,
             tips,
             create_time,
         })

@@ -31,7 +31,6 @@ const TrainController = {
                 manager_name,
                 manager_email,
                 signup_count: 0,
-                is_full_count: 0,
                 signup_deadline,
                 train_start,
                 train_end,
