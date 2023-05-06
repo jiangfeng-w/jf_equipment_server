@@ -3,7 +3,7 @@ const TrainService = require('../../service/web/TrainService')
 const TrainController = {
     // 获取培训课程列表
     trainCourseList: async (req, res) => {
-        const { iden: student_number } = req.params
+        const { student_number, equip_name } = req.body
         const time = Date.now()
         try {
             // 查出当前用户已经报名的课程
@@ -17,7 +17,7 @@ const TrainController = {
                     return (i = i.course_id)
                 })
             // 取出课程列表
-            const list = await TrainService.trainCourseList()
+            const list = await TrainService.trainCourseList(equip_name)
             const newList = list.map(i => {
                 if (time < i.signup_deadline) {
                     i.state = 0
@@ -70,9 +70,9 @@ const TrainController = {
     },
     // 获取我报名的课程
     myCourseList: async (req, res) => {
-        const { iden: student_number } = req.params
+        const { student_number, equip_name } = req.body
         try {
-            const list = await TrainService.myCourseList(student_number)
+            const list = await TrainService.myCourseList(student_number, equip_name)
             res.status(200).send({
                 message: '报名课程查询成功',
                 data: list,

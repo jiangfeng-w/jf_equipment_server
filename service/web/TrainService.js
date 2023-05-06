@@ -4,8 +4,9 @@ const { Op } = require('sequelize')
 
 const TrainService = {
     // 获取培训课程列表
-    trainCourseList: async () => {
+    trainCourseList: async equip_name => {
         return CourseModel.findAll({
+            where: { equip_name: { [Op.like]: `%${equip_name || ''}%` } },
             order: [['state', 'ASC']],
         })
     },
@@ -28,9 +29,12 @@ const TrainService = {
     },
 
     // 我的报名课程
-    myCourseList: async student_number => {
+    myCourseList: async (student_number, equip_name) => {
         return TrainModel.findAll({
-            where: { student_number },
+            where: {
+                student_number,
+                equip_name: { [Op.like]: `%${equip_name || ''}%` },
+            },
         })
     },
 }
