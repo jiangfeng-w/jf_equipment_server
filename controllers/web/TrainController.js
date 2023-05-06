@@ -4,6 +4,7 @@ const TrainController = {
     // 获取培训课程列表
     trainCourseList: async (req, res) => {
         const { iden: student_number } = req.params
+        const time = Date.now()
         try {
             // 查出当前用户已经报名的课程
             let myList = await TrainService.myCourseList(student_number)
@@ -15,10 +16,29 @@ const TrainController = {
                 .map(i => {
                     return (i = i.course_id)
                 })
+            // 取出课程列表
             const list = await TrainService.trainCourseList()
+            const newList = list.map(i => {
+                if (time < i.signup_deadline) {
+                    i.state = 0
+                    return i
+                } else if (i.signup_deadline < time < i.train_start) {
+                    i.state = 1
+                    return i
+                } else if (i.train_start < time < i.train_end) {
+                    i.state = 2
+                    return i
+                } else if (time > i.train_end) {
+                    i.state = 3
+                    return i
+                }
+            })
+            // 设置课程状态
+            await TrainService.setState(newList)
+
             res.status(200).send({
                 message: '获取培训课程成功',
-                data: list,
+                data: newList,
                 myList,
                 customData: req.customData,
             })

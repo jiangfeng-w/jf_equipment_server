@@ -9,6 +9,14 @@ const TrainService = {
             order: [['state', 'ASC']],
         })
     },
+    // 设置课程状态
+    setState: async newList => {
+        for (const item of newList) {
+            const { id, state } = item
+            await CourseModel.update({ state }, { where: { id } })
+            await TrainModel.update({ state }, { where: { equip_id: id } })
+        }
+    },
 
     // 报名培训课程
     // 课程表
