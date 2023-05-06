@@ -45,14 +45,102 @@ const EquipmentService = {
             order: [['apply_time', 'DESC']],
         })
     },
+
     // 获取设备列表
-    getEquipmentList: async (pageSize, currentPage) => {
+    getEquipmentList: async (
+        name,
+        function_range,
+        classification,
+        discipline_classification,
+        unit,
+        country,
+        price_range,
+        buy_time,
+        state,
+        pageSize,
+        currentPage
+    ) => {
         return EquipmentModel.findAll({
-            order: [['manager_number', 'ASC']],
+            where: {
+                name: { [Op.like]: `%${name || ''}%` },
+                function_range: { [Op.like]: `%${function_range || ''}%` },
+                classification: classification.length ? { [Op.in]: classification } : { [Op.ne]: null },
+                discipline_classification: discipline_classification.length
+                    ? { [Op.in]: discipline_classification }
+                    : { [Op.ne]: null },
+                unit: unit.length ? { [Op.in]: unit } : { [Op.ne]: null },
+                country: country.length ? { [Op.in]: country } : { [Op.ne]: null },
+                price_range: price_range.length ? { [Op.in]: price_range } : { [Op.ne]: null },
+                state: state.length ? { [Op.in]: state } : { [Op.ne]: null },
+                buy_time: buy_time.length === 2 ? { [Op.between]: buy_time } : { [Op.ne]: null },
+            },
             offset: (currentPage - 1) * pageSize,
             limit: pageSize,
         })
     },
+    // 查询长度
+    getEquipmentListLength: async (
+        name,
+        function_range,
+        classification,
+        discipline_classification,
+        unit,
+        country,
+        price_range,
+        buy_time,
+        state
+    ) => {
+        return EquipmentModel.count({
+            where: {
+                name: { [Op.like]: `%${name || ''}%` },
+                function_range: { [Op.like]: `%${function_range || ''}%` },
+                classification: classification.length ? { [Op.in]: classification } : { [Op.ne]: null },
+                discipline_classification: discipline_classification.length
+                    ? { [Op.in]: discipline_classification }
+                    : { [Op.ne]: null },
+                unit: unit.length ? { [Op.in]: unit } : { [Op.ne]: null },
+                country: country.length ? { [Op.in]: country } : { [Op.ne]: null },
+                price_range: price_range.length ? { [Op.in]: price_range } : { [Op.ne]: null },
+                state: state.length ? { [Op.in]: state } : { [Op.ne]: null },
+                buy_time: buy_time.length === 2 ? { [Op.between]: buy_time } : { [Op.ne]: null },
+            },
+        })
+    },
+    // 获取options
+    getOptions: async () => {
+        // 国别
+        const uniqueCountry = await EquipmentModel.findAll({
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('country')), 'country']],
+            raw: true,
+        })
+        // 设备分类
+        const uniqueClassification = await EquipmentModel.findAll({
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('classification')), 'classification']],
+            raw: true,
+        })
+        // 学科分类
+        const uniqueDiscipline = await EquipmentModel.findAll({
+            attributes: [
+                [Sequelize.fn('DISTINCT', Sequelize.col('discipline_classification')), 'discipline_classification'],
+            ],
+            raw: true,
+        })
+        // 所属单位
+        const uniqueUnit = await EquipmentModel.findAll({
+            attributes: [[Sequelize.fn('DISTINCT', Sequelize.col('unit')), 'unit']],
+            raw: true,
+        })
+
+        // 合并
+        const obj = {
+            countrys: uniqueCountry.map(i => i.country),
+            classifications: uniqueClassification.map(i => i.classification),
+            discipline_classifications: uniqueDiscipline.map(i => i.discipline_classification),
+            units: uniqueUnit.map(i => i.unit),
+        }
+        return obj
+    },
+
     // 从培训表中获取已经培训的学生列表
     getTrainedList: async id => {
         // 获取设备名称

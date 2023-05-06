@@ -41,10 +41,35 @@ const EquipmentController = {
 
     // 获取设备列表
     getEquipmentList: async (req, res) => {
-        const { pageSize = 12, currentPage = 1 } = req.body
+        console.log(req.body)
+        const {
+            name = '',
+            function_range = '',
+            classification = [],
+            discipline_classification = [],
+            unit = [],
+            country = [],
+            price_range = [],
+            buy_time = [],
+            state = [],
+            pageSize = 8,
+            currentPage = 1,
+        } = req.body
 
         try {
-            const list = await EquipmentService.getEquipmentList(pageSize, currentPage)
+            const list = await EquipmentService.getEquipmentList(
+                name,
+                function_range,
+                classification,
+                discipline_classification,
+                unit,
+                country,
+                price_range,
+                buy_time,
+                state,
+                pageSize,
+                currentPage
+            )
             res.status(200).send({
                 message: '获取设备列表成功',
                 data: list,
@@ -57,6 +82,57 @@ const EquipmentController = {
             })
         }
     },
+    // 获取列表长度
+    getEquipmentListLength: async (req, res) => {
+        const {
+            name = '',
+            function_range = '',
+            classification = [],
+            discipline_classification = [],
+            unit = [],
+            country = [],
+            price_range = [],
+            buy_time = [],
+            state = [],
+        } = req.body
+        try {
+            const length = await EquipmentService.getEquipmentListLength(
+                name,
+                function_range,
+                classification,
+                discipline_classification,
+                unit,
+                country,
+                price_range,
+                buy_time,
+                state
+            )
+            res.status(200).send({
+                message: '获取长度成功',
+                data: length,
+            })
+        } catch (error) {
+            res.status(500).send({
+                message: '获取长度失败',
+            })
+        }
+    },
+    // 获取options
+    getOptions: async (req, res) => {
+        try {
+            const list = await EquipmentService.getOptions()
+            res.status(200).send({
+                message: '获取options成功',
+                data: list,
+            })
+        } catch (err) {
+            res.status(500).send({
+                message: '获取options失败',
+                error: err.message,
+            })
+        }
+    },
+
     // 获取设备信息--id
     getEquipmentData: async (req, res) => {
         const { id } = req.params

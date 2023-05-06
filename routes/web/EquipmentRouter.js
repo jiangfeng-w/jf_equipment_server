@@ -9,6 +9,11 @@ router.get('/web/equipment/getRangList', EquipmentController.getRangList)
 
 // 获取设备列表
 router.post('/web/equipment/list', EquipmentController.getEquipmentList)
+// 查询长度
+router.post('/web/equipment/listLength', EquipmentController.getEquipmentListLength)
+// 获取options
+router.get('/web/equipment/options', EquipmentController.getOptions)
+
 // 获取设备信息--id
 router.get('/web/equipment/equipdata/:id', EquipmentController.getEquipmentData)
 // 获取设备预约情况--id
