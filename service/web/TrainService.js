@@ -14,7 +14,6 @@ const TrainService = {
         for (const item of newList) {
             const { id, state } = item
             await CourseModel.update({ state }, { where: { id } })
-            await TrainModel.update({ state }, { where: { equip_id: id } })
         }
     },
 
