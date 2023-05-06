@@ -14,4 +14,10 @@ router.get('/admin/train/signUpList/:course_id', TrainController.signUpList)
 router.post('/admin/train/agree', TrainController.agree)
 // 拒绝报名
 router.post('/admin/train/refuse', TrainController.refuse)
+
+// 课程学员列表
+router.get('/admin/train/courseStudents/:course_id', TrainController.courseStudents)
+// 完成培训
+router.post('/admin/train/completed', TrainController.completed)
+
 module.exports = router

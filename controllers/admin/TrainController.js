@@ -100,6 +100,30 @@ const TrainController = {
             res.status(500).send({ error: error.message })
         }
     },
+
+    // 课程学员
+    courseStudents: async (req, res) => {
+        try {
+            const list = await TrainService.courseStudents(req.params.course_id)
+            res.status(200).send({
+                message: '获取课程学员成功',
+                data: list,
+            })
+        } catch (error) {
+            res.status(500).send({ error: error.message })
+        }
+    },
+    // 完成培训
+    completed: async (req, res) => {
+        try {
+            await TrainService.completed(req.body)
+            res.status(200).send({
+                message: '操作成功',
+            })
+        } catch (error) {
+            res.status(500).send({ error: error.message })
+        }
+    },
 }
 
 module.exports = TrainController

@@ -68,6 +68,22 @@ const TrainService = {
         // 改变报名状态
         await TrainModel.update({ state: 1, approval_time }, { where: { id } })
     },
+
+    // 课程学员
+    courseStudents: async course_id => {
+        return TrainModel.findAll({
+            where: {
+                course_id,
+                state: {
+                    [Op.in]: [2, 3, 4],
+                },
+            },
+        })
+    },
+    // 完成培训
+    completed: async ({ ids }) => {
+        await TrainModel.update({ state: 4 }, { where: { id: { [Op.in]: ids } } })
+    },
 }
 
 module.exports = TrainService
