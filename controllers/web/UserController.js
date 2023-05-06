@@ -251,7 +251,7 @@ const UserController = {
                         id: student.id,
                         number: student.number,
                         name: student.name,
-                        email: student.email,
+                        email,
                         is_bind_email: 1,
                         avatar: student.avatar,
                         role: student.role,
