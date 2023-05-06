@@ -86,10 +86,6 @@ const Train = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        signup_count: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
         signup_deadline: {
             type: DataTypes.INTEGER,
             allowNull: false,
@@ -99,10 +95,6 @@ const Train = sequelize.define(
             allowNull: false,
         },
         train_end: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        course_state: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
