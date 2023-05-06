@@ -40,7 +40,7 @@ const Train = sequelize.define(
         },
         approval_time: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
         },
         tips: {
             type: DataTypes.STRING,
