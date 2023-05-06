@@ -3,11 +3,23 @@ const TrainService = require('../../service/web/TrainService')
 const TrainController = {
     // 获取培训课程列表
     trainCourseList: async (req, res) => {
+        const { iden: student_number } = req.params
         try {
+            // 查出当前用户已经报名的课程
+            let myList = await TrainService.myCourseList(student_number)
+            // 筛选出已报名的课程id
+            myList = myList
+                .filter(i => {
+                    return [0, 2, 3, 4].includes(i.state)
+                })
+                .map(i => {
+                    return (i = i.course_id)
+                })
             const list = await TrainService.trainCourseList()
             res.status(200).send({
                 message: '获取培训课程成功',
                 data: list,
+                myList,
                 customData: req.customData,
             })
         } catch (error) {
