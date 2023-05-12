@@ -240,9 +240,9 @@ const UserController = {
     },
     // 学生列表长度
     getStudentListLength: async (req, res) => {
-        let { name = '', major = [], grade = [], trained = '' } = req.body
+        let { name = '', major = [], grade = [] } = req.body
         try {
-            const length = await UserService.getStudentListLength(name, major, grade, trained)
+            const length = await UserService.getStudentListLength(name, major, grade)
             res.status(200).send({
                 message: '获取长度成功',
                 data: length,
@@ -255,7 +255,7 @@ const UserController = {
     },
     // 查询学生信息
     getStudentList: async (req, res) => {
-        let { name = '', major = [], grade = [], trained = [], pageSize = 5, currentPage = 1 } = req.body
+        let { name = '', major = [], grade = [], pageSize = 5, currentPage = 1 } = req.body
 
         let id
         if (req.params.id) {
@@ -263,7 +263,7 @@ const UserController = {
         }
 
         try {
-            const list = await UserService.getStudentList(id, name, major, grade, trained, pageSize, currentPage)
+            const list = await UserService.getStudentList(id, name, major, grade, pageSize, currentPage)
             res.status(200).send({
                 message: req.params.id ? '获取学生信息成功' : '获取学生列表成功',
                 data: list,

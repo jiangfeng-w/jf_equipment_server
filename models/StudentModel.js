@@ -61,14 +61,6 @@ const Student = sequelize.define(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        trained: {
-            type: DataTypes.INTEGER,
-            allowNull: true,
-        },
-        train_teacher: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
         create_time: {
             type: DataTypes.BIGINT,
             allowNull: false,

@@ -92,18 +92,17 @@ const UserService = {
         })
     },
     // 获取长度
-    getStudentListLength: async (name, major, grade, trained) => {
+    getStudentListLength: async (name, major, grade) => {
         return StudentModel.count({
             where: {
                 name: { [Op.like]: `%${name || ''}%` },
-                trained: trained.length ? { [Op.in]: trained } : { [Op.ne]: null },
                 major: major.length ? { [Op.in]: major } : { [Op.ne]: null },
                 grade: grade.length ? { [Op.in]: grade } : { [Op.ne]: null },
             },
         })
     },
     // 用id查询学生信息/查询全部信息
-    getStudentList: async (id, name, major, grade, trained, pageSize, currentPage) => {
+    getStudentList: async (id, name, major, grade, pageSize, currentPage) => {
         if (id) {
             return StudentModel.findOne({
                 where: { id },
@@ -113,7 +112,6 @@ const UserService = {
             return StudentModel.findAll({
                 where: {
                     name: { [Op.like]: `%${name || ''}%` },
-                    trained: trained.length ? { [Op.in]: trained } : { [Op.ne]: null },
                     major: major.length ? { [Op.in]: major } : { [Op.ne]: null },
                     grade: grade.length ? { [Op.in]: grade } : { [Op.ne]: null },
                 },
@@ -141,7 +139,7 @@ const UserService = {
     // 查学生专业
     getMajors: async () => {
         return StudentModel.findAll({
-            attributes: ['academy', 'major', 'degree', 'grade', 'trained'],
+            attributes: ['academy', 'major', 'degree', 'grade'],
         })
     },
     //#endregion
