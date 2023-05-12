@@ -213,23 +213,38 @@ const UserController = {
         const student = await UserService.studentLogin(number)
         const user = teacher || student
         if (user) {
-            // 生成验证码
-            const email_code = generateVerificationCode()
-            try {
-                // 获取SMTP服务邮箱
-                await saveEmail()
-                // 发送邮件
-                await sendVerificationCodeEmail(email, email_code)
-                // 向数据库存储验证码
-                await UserService.sendEmail(user.id, user.role, email_code)
-                res.status(201).send({
-                    message: '验证码已发送，请注意查看邮箱',
+            if (!user.email) {
+                // 未绑定邮箱
+                res.status(404).send({
+                    error: '用户未绑定邮箱',
                 })
-            } catch (error) {
-                res.status(500).send({ error: error.message })
+            } else {
+                // 如果邮箱错误
+                if (!(email === user.email)) {
+                    res.status(404).send({
+                        error: '邮箱填写错误',
+                    })
+                } else {
+                    console.log('发送验证码')
+                    // 生成验证码
+                    const email_code = generateVerificationCode()
+                    try {
+                        // 获取SMTP服务邮箱
+                        await saveEmail()
+                        // 发送邮件
+                        await sendVerificationCodeEmail(email, email_code)
+                        // 向数据库存储验证码
+                        await UserService.sendEmail(user.id, user.role, email_code)
+                        res.status(201).send({
+                            message: '验证码已发送，请注意查看邮箱',
+                        })
+                    } catch (error) {
+                        res.status(500).send({ error: error.message })
+                    }
+                }
             }
         } else {
-            res.status(404).send({ error: '该用户不存在' })
+            res.status(404).send({ error: '用户名错误' })
         }
     },
     // 学生绑定邮箱
