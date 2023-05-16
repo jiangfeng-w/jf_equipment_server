@@ -54,11 +54,32 @@ const TrainController = {
 
         try {
             const list = await TrainService.trainCourseList(manager_number)
+
+            const time = Date.now()
+            // 根据时间修改课程的状态
+            const newList = list.map(i => {
+                if (time < i.signup_deadline) {
+                    i.state = 0
+                    return i
+                } else if (i.signup_deadline < time && time < i.train_start) {
+                    i.state = 1
+                    return i
+                } else if (i.train_start < time && time < i.train_end) {
+                    i.state = 2
+                    return i
+                } else if (time > i.train_end) {
+                    i.state = 3
+                    return i
+                }
+            })
+            // 设置课程状态
+            await TrainService.setState(newList)
             res.status(200).send({
                 message: '获取培训课程成功',
                 data: list,
             })
         } catch (error) {
+            console.log(error.message)
             res.status(500).send({ error: error.message })
         }
     },

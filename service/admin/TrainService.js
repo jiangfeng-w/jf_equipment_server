@@ -53,6 +53,13 @@ const TrainService = {
             return CourseModel.findAll()
         }
     },
+    // 设置课程状态
+    setState: async newList => {
+        for (const item of newList) {
+            const { id, state } = item
+            await CourseModel.update({ state }, { where: { id } })
+        }
+    },
     // 根据课程id获取报名表
     signUpList: async course_id => {
         return TrainModel.findAll({
