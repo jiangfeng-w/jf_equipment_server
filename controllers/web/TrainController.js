@@ -18,14 +18,15 @@ const TrainController = {
                 })
             // 取出课程列表
             const list = await TrainService.trainCourseList(equip_name)
+            // 根据时间修改课程的状态
             const newList = list.map(i => {
                 if (time < i.signup_deadline) {
                     i.state = 0
                     return i
-                } else if (i.signup_deadline < time < i.train_start) {
+                } else if (i.signup_deadline < time && time < i.train_start) {
                     i.state = 1
                     return i
-                } else if (i.train_start < time < i.train_end) {
+                } else if (i.train_start < time && time < i.train_end) {
                     i.state = 2
                     return i
                 } else if (time > i.train_end) {
